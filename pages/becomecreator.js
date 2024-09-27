@@ -1,8 +1,19 @@
 import { Button } from "../components";
+import TagsInput from "../modules/tagsInput";
 
 const BecomeCreator = () => {
   return (
-    <div className="max-w-[400px] rounded-[0.5rem] pt-2 pb-2 pl-4 pr-4">
+    <div className="max-w-[400px] rounded-[0.5rem] pt-2 pb-2 pl-4 pr-4 ml-auto mr-auto">
+      <div className="mb-4">
+        <label className="mb-1 inline-block font-semibold">About you</label>
+        <textarea
+          className="mt-4 p-2 focus:border-primary-color border-[1px] border-solid transition-colors rounded-md"
+          placeholder="Short text about you and your interests"
+          cols="30"
+          rows="5"
+        />
+      </div>
+      <TagsInput />
       <div className="mb-4">
         <label className="mb-1 inline-block font-semibold">
           Wallet address
