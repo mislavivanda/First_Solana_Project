@@ -2,14 +2,17 @@ import Avatar from "../avatar";
 import PostIcon from "../../assets/postIcon";
 import SupportIcon from "../../assets/supportIcon";
 
-const CreatorCard = () => {
+const CreatorCard = ({ onCardClick }) => {
   return (
-    <div className="flex-col items-stretch rounded-md bg-white shadow-md">
+    <div
+      className="flex-col items-stretch rounded-md bg-white shadow-md cursor-pointer hover:scale-105"
+      onClick={onCardClick}
+    >
       <div className="flex-col items-center grow p-2">
         <div className="text-right">
           <span className="text-primary-color font-bold">2 NEW</span>
         </div>
-        <Avatar firstLetter="MI" classes="justify-center" />
+        <Avatar firstLetter="MI" containerClasses="justify-center" />
         <p className="text-lg text-center break-words">Mislav Ivanda</p>
       </div>
       <div className="pl-2 pr-2 pt-1 pb-1 border-t-primary-color border-t-2 border-solid rounded-br-md rounded-bl-md">
