@@ -1,5 +1,5 @@
 import SupportIcon from "../../assets/supportIcon";
-import { Avatar, Button } from "../../components";
+import { Avatar, Button, PostCard } from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
 
 const AboutCreator = ({ creatorId }) => {
@@ -16,6 +16,8 @@ const AboutCreator = ({ creatorId }) => {
   const handleSupportButtonClick = (solPrice) => {
     console.log("handleSupportButtonClick", solPrice);
   };
+
+  const hassSupportedCreator = true;
 
   return (
     <section className="mt-4 sm:mt-16">
@@ -51,15 +53,32 @@ const AboutCreator = ({ creatorId }) => {
             </span>
             <SupportIcon classes="w-[30px] h-[30px] fill-font-color-dark" />
           </div>
-          <div className="text-center">
-            <Button
-              onClick={() => handleSupportButtonClick(1.3)}
-              type="filled"
-              classes="mt-5 text-xl"
-            >
-              {`Support for 1.3SOL`}
-            </Button>
-          </div>
+          {
+            //*AKO JE CREATOR SUPPORTAN OD STRANE USERA TADA PRIKAZUJEMO NJEGOVE POSTOVE, U SUPROTNOME PRIKAZUJEMO SUPPORT DUGME
+            hassSupportedCreator ? (
+              <section className="mt-6">
+                <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
+                  Posts
+                </h1>
+                <div className="mt-6 mb-6 grid grid-cols-1 gap-4 sm:gap-6">
+                  <PostCard />
+                  <PostCard />
+                  <PostCard />
+                  <PostCard />
+                </div>
+              </section>
+            ) : (
+              <div className="text-center">
+                <Button
+                  onClick={() => handleSupportButtonClick(1.3)}
+                  type="filled"
+                  classes="mt-5 text-xl"
+                >
+                  {`Support for 1.3SOL`}
+                </Button>
+              </div>
+            )
+          }
         </div>
       </article>
     </section>
