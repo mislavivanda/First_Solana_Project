@@ -14,3 +14,27 @@ export const createSurname = (
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+export const parseBlogDate = (rawTime) => {
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  return (
+    rawTime.getDate().toString().padStart(2, "0") +
+    " " +
+    monthNames[rawTime.getMonth()] +
+    " " +
+    rawTime.getFullYear()
+  );
+};

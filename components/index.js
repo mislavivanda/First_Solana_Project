@@ -10,6 +10,9 @@ import Popup from "./popup";
 import SolanaWallet from "./wallet";
 import BecomeCreatorButton from "./becomeCreator";
 import CreatorCard from "./creatorCard";
+import SelectInput from "./select";
+import Widget from "./widget";
+import PostCard from "./post";
 
 export {
   Button,
@@ -24,4 +27,7 @@ export {
   SolanaWallet,
   BecomeCreatorButton,
   CreatorCard,
+  SelectInput,
+  Widget,
+  PostCard,
 };

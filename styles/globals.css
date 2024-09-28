@@ -26,3 +26,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.chevron-icon-active {
+  transform: rotate(0.25turn);
+}

@@ -4,13 +4,12 @@ import CreatorHomePage from "../modules/creatorHomePage";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
-const HomePage = () => {
-  const router = useRouter();
+const HomePage = ({ mdxParsedContent }) => {
   const { data: session } = useSession();
   if (!session) {
     return <UnauthorizedHomePage />;
-  } else if (session.isCreator) {
-    return <CreatorHomePage />;
+  } else if (!session.isCreator) {
+    return <CreatorHomePage mdxParsedContent={mdxParsedContent} />;
   } else return <UserHomePage />;
 };
 

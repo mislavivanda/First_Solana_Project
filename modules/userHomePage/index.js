@@ -7,7 +7,7 @@ const UserHomePage = () => {
   const onPopularCreatorClick = () => router.push(`/creators/1`);
 
   return (
-    <div>
+    <>
       <section>
         <h1 className="inline text-3xl font-extrabold  mx-5 sm:mx-10 w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
           Your creators
@@ -34,7 +34,7 @@ const UserHomePage = () => {
         </div>
       </section>
       <BecomeCreatorButton />
-    </div>
+    </>
   );
 };
 
