@@ -42,12 +42,15 @@ const CreatorHomePage = ({ mdxParsedContent }) => {
         <h1 className="inline text-3xl font-extrabold  mx-5 sm:mx-10 w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
           Posts
         </h1>
-        <div>
+        <div className="mt-6 mb-6 grid gap-2 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <PostCard />
+          <PostCard />
+          <PostCard />
           <PostCard />
         </div>
       </section>
       <div className="w-full mx-auto mb-2 flex items-center justify-center">
-        <Button type="filled" classes="!text-xl">
+        <Button type="filled" classes="!text-2xl">
           Create content
         </Button>
       </div>

@@ -7,22 +7,21 @@ import { Quote } from "./quote.js";
 import { ResponsiveImage } from "./image.js";
 
 const customComponents = {
-  h2: H2,
-  p: P,
-  ul: Ul,
-  li: Li,
-  blockquote: Quote,
+  h2: H2(""),
+  p: P(""),
+  ul: Ul(""),
+  li: Li(""),
+  blockquote: Quote(""),
   img: ResponsiveImage,
 };
 
 const PostCard = ({ blogData }) => {
   return (
-    <article className="max-w-screen-lg mx-auto">
-      <div>Header</div>
-      <div className="flex justify-end items-start">
-        <hr className="mt-[-2px] w-[200px] h-[2px] bg-primary-color" />
+    <article className="flex flex-col h-[300px] bg-white rounded-lg p-2 shadow-md overflow-hidden line-clamp-3 text-ellipsis">
+      <div className="text-primary-color capitalize text-xl font-semibold border-b-2 border-solid border-primary-color pb-2">
+        WallStreet rise
       </div>
-      <div className="mt-10 text-lg">
+      <div className="text-lg flex-grow my-2 overflow-y-auto">
         <ReactMarkdown
           components={customComponents}
           //eslint-disable-next-line react/no-children-prop
@@ -55,7 +54,9 @@ Don’t forget that warm-up for the PowerStation begins on the 2022-01-11 and to
 `}
         />
       </div>
-      <div>{parseBlogDate(new Date())}</div>
+      <div className="border-t-2 border-solid border-primary-color text-right font-semibold pt-2">
+        {parseBlogDate(new Date())}
+      </div>
     </article>
   );
 };
