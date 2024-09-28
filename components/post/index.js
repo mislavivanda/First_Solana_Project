@@ -1,10 +1,14 @@
-import ReactMarkdown from "react-markdown";
 import { parseBlogDate } from "../../helpers";
 import { H2 } from "./heading.js";
 import { P } from "./text.js";
 import { Ul, Li } from "./list.js";
 import { Quote } from "./quote.js";
 import { ResponsiveImage } from "./image.js";
+import dynamic from "next/dynamic";
+//*PREVENT HYDRATION ERROR
+const ReactMarkdown = dynamic(() => import("react-markdown"), {
+  ssr: false,
+});
 
 const customComponents = {
   h2: H2(""),
