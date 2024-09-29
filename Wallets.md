@@ -1,0 +1,17 @@
+## TEST WALLETS
+
+### BoldMint
+
+-PublicKey: D6nLmCxSFxTv8szEq8X5qzFQBC7ApTxkTcNfQN5mAZBZ
+-PrivateKey: 5CupvogTX5PxstxUsV8pjMjXYHvTRNMqktsxBzujdy1EZviR5W4pYHTt6nFWa6u3S88ZxFmLuH7g6iUppLDji4Ef
+
+### CreatorX
+
+-PublicKey: 8yFpkxRaJUNYonKTF99XmfMR7kAMG4ZTMH466bxR9PJc
+
+- PrivateKey: 3xPNquRM6c3KMojDrnf7FL57TmLTDEC8WJ58gL4CXZCCpN3XKKtJb3Zc8H9qevhafFbKwztuhWAuehmdg1QSKr5i
+
+### SupporterX
+
+-PublicKey: ASZGV94JK6weZqhiSL6HDoJH8w6ES9GuHUCG5jFa3tnQ
+-PrivateKey: 4xhMndzBPbjqUox6HafV3KHtfAGfVtwL2usXwfchMKryDPHDKtftcY3tiibuUx4uUDmZiqjCdXWcGbVVUeArykyi

@@ -1,6 +1,16 @@
+import { useEffect, useState } from "react";
 import SupportIcon from "../../assets/supportIcon";
-import { Avatar, Button, PostCard } from "../../components";
+import { Avatar, Button, PostCard, Popup } from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import {
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  LAMPORTS_PER_SOL,
+  Keypair,
+} from "@solana/web3.js";
+import bs58 from "bs58";
 
 const AboutCreator = ({ creatorId }) => {
   const creatorData = {
@@ -12,12 +22,61 @@ const AboutCreator = ({ creatorId }) => {
       "Hi, I'm John Doe, currently working as a hedge fund manager and in my free time like to write various analysis about market conditions and predictions. Hope you'll enjoy them",
     supportersCount: 16,
   };
+  const [screenWidthSize, setScreenWidthSize] = useState(false);
+  const [walletNotConnectedModalOpen, setWalletNotConnectedModalOpen] =
+    useState(false);
 
-  const handleSupportButtonClick = (solPrice) => {
-    console.log("handleSupportButtonClick", solPrice);
+  const { publicKey } = useWallet();
+  const { connection } = useConnection();
+
+  useEffect(() => {
+    setScreenWidthSize(window.innerWidth);
+  }, []);
+
+  const handleSupportButtonClick = async () => {
+    console.log("handleSupportButtonClick");
+    if (publicKey) {
+      setWalletNotConnectedModalOpen(true);
+    } else {
+      const supporterPrivateKey =
+        "4xhMndzBPbjqUox6HafV3KHtfAGfVtwL2usXwfchMKryDPHDKtftcY3tiibuUx4uUDmZiqjCdXWcGbVVUeArykyi";
+      const supporterPublicKey = "ASZGV94JK6weZqhiSL6HDoJH8w6ES9GuHUCG5jFa3tnQ";
+      const supporterPrivateKeyArray = bs58.decode(supporterPrivateKey);
+      const supporterEntity = Keypair.fromSecretKey(supporterPrivateKeyArray);
+      const boldMintAddress = new PublicKey(
+        process.env.BOLDMINT_PUBLIC_KEYSALLET
+      );
+      const creatorAddress = new PublicKey(
+        "FdkdDo7y8qMGWsa1ZACgNvqCrE85s8Y8YC7L5f2bnZn1"
+      );
+      const totalSOLAmount = 1.3;
+      const boldMintAmmount = Math.floor(
+        (totalSOLAmount * process.env.BOLDMINT_TRANSACTION_FEE_PERCENTAGE) / 100
+      );
+      const creatorAmmount = totalSOLAmount - boldMintAmmount;
+      //*1 TRANSAKCIJA S 2 TRANSFERA U POZADINI -> USER CE TREBAT POTPISAT SAMO 1 TRANSAKCIJU NA totalAmmount IZNOS
+      const transfer1 = SystemProgram.transfer({
+        fromPubkey: supporterEntity.publicKey,
+        toPubkey: boldMintAddress,
+        lamports: boldMintAmmount * LAMPORTS_PER_SOL,
+      });
+
+      const transfer2 = SystemProgram.transfer({
+        fromPubkey: supporterEntity.publicKey,
+        toPubkey: creatorAddress,
+        lamports: creatorAmmount * LAMPORTS_PER_SOL,
+      });
+      const transaction = new Transaction().add(transfer1, transfer2);
+      const signature = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [supporterEntity]
+      );
+      console.log("Transaction successful with signature: ", signature);
+    }
   };
 
-  const hassSupportedCreator = true;
+  const hassSupportedCreator = false;
 
   return (
     <section className="mt-4 sm:mt-16">
@@ -68,15 +127,45 @@ const AboutCreator = ({ creatorId }) => {
                 </div>
               </section>
             ) : (
-              <div className="text-center">
-                <Button
-                  onClick={() => handleSupportButtonClick(1.3)}
-                  type="filled"
-                  classes="mt-5 text-xl"
+              <>
+                <div className="text-center">
+                  <Button
+                    onClick={handleSupportButtonClick}
+                    type="filled"
+                    classes="mt-5 text-xl"
+                  >
+                    {`Support for 1.3SOL`}
+                  </Button>
+                </div>
+                <Popup
+                  isOpen={walletNotConnectedModalOpen}
+                  closeModal={setWalletNotConnectedModalOpen}
                 >
-                  {`Support for 1.3SOL`}
-                </Button>
-              </div>
+                  <div className="min-w-[300px]">
+                    <h3 className="font-bold">Please Connect Your Wallet</h3>
+                    <div className="my-1 bg-primary-color w-full h-[2px]" />
+                    <p className="mt-1">
+                      To continue, you need to connect your Solana wallet.
+                    </p>
+                    <p className="mt-1">
+                      {screenWidthSize < 640 ? (
+                        <span>
+                          Tap the{" "}
+                          <span className="font-bold">menu icon (☰)</span> to
+                          open the navigation and then select{" "}
+                          <span className="font-bold">Connect Wallet</span>
+                        </span>
+                      ) : (
+                        <span>
+                          You can find the{" "}
+                          <span className="font-bold">Connect Wallet</span>{" "}
+                          button in the navigation bar at the top.
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </Popup>
+              </>
             )
           }
         </div>

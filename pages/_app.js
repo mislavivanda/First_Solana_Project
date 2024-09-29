@@ -8,7 +8,10 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { UnsafeBurnerWalletAdapter } from "@solana/wallet-adapter-wallets";
+import {
+  SolflareWalletAdapter,
+  PhantomWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
 require("@solana/wallet-adapter-react-ui/styles.css");
 import Head from "next/head";
@@ -19,7 +22,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
-    () => [new UnsafeBurnerWalletAdapter()],
+    () => [new SolflareWalletAdapter(), new PhantomWalletAdapter()],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [network]
   );
