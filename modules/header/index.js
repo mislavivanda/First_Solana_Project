@@ -30,7 +30,7 @@ const Header = () => {
           layout="fixed"
           alt="Company logo"
         />
-        <span className="ml-1 text-primary-color text-2xl">Solana</span>
+        <span className="ml-1 text-primary-color text-2xl">BoldMint</span>
       </div>
       <BurgerNavigation
         isBurgerOpen={isBurgerOpen}

@@ -17,7 +17,7 @@ const About = () => {
             alt="Brand logo"
           />
           <span className="ml-1 text-primary-color text-5xl font-extrabold">
-            Solana
+            BoldMint
           </span>
         </div>
       </section>

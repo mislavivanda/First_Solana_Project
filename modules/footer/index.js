@@ -24,7 +24,9 @@ const Footer = () => {
           )
         )}
       </div>
-      <div className="p-2 text-center">@Solana 2024. All rights reserved.</div>
+      <div className="p-2 text-center">
+        @BoldMint 2024. All rights reserved.
+      </div>
     </footer>
   );
 };

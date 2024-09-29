@@ -27,9 +27,19 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="My first project on Solana" />
+        <meta
+          name="description"
+          content="cutting-edge platform that empowers bold creators to mint
+            exclusive NFTs using the Solana blockchain. By leveraging
+            Solana's fast, low-cost transactions, creators can easily
+            tokenize their content, allowing fans to access their material
+            through SOL payments. With minimal fees and seamless scalability,
+            BoldMint offers creators a new way to monetize without the overhead
+            of traditional platforms, all while keeping ownership of their work
+            and building deeper connections with their audience."
+        />
         <link rel="icon" href="/favicon.ico" key="icon" />
-        <title>Solana</title>
+        <title>BoldMint</title>
       </Head>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
