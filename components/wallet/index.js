@@ -14,8 +14,9 @@ const SolanaWallet = () => {
   useEffect(() => {
     const getInfo = async () => {
       if (connection && publicKey) {
-        const accountInfo = await connection.getAccountInfo(publicKey);
-        console.log("Account balance", accountInfo.lamports / LAMPORTS_PER_SOL);
+        // DODAJ ERROR HANDLING
+        // const accountInfo = await connection.getAccountInfo(publicKey);
+        // console.log("Account balance", accountInfo.lamports / LAMPORTS_PER_SOL);
       }
     };
   }, [connection, publicKey]);

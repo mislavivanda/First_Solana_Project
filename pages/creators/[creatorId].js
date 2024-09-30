@@ -7,6 +7,7 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
+  sendAndConfirmTransaction,
   LAMPORTS_PER_SOL,
   Keypair,
 } from "@solana/web3.js";
@@ -34,7 +35,7 @@ const AboutCreator = ({ creatorId }) => {
   }, []);
 
   const handleSupportButtonClick = async () => {
-    console.log("handleSupportButtonClick");
+    console.log("handleSupportButtonClick", process.env);
     if (publicKey) {
       setWalletNotConnectedModalOpen(true);
     } else {
@@ -44,35 +45,50 @@ const AboutCreator = ({ creatorId }) => {
       const supporterPrivateKeyArray = bs58.decode(supporterPrivateKey);
       const supporterEntity = Keypair.fromSecretKey(supporterPrivateKeyArray);
       const boldMintAddress = new PublicKey(
-        process.env.BOLDMINT_PUBLIC_KEYSALLET
+        process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
       );
       const creatorAddress = new PublicKey(
         "FdkdDo7y8qMGWsa1ZACgNvqCrE85s8Y8YC7L5f2bnZn1"
       );
       const totalSOLAmount = 1.3;
-      const boldMintAmmount = Math.floor(
-        (totalSOLAmount * process.env.BOLDMINT_TRANSACTION_FEE_PERCENTAGE) / 100
-      );
+      const boldMintAmmount =
+        (totalSOLAmount *
+          process.env.NEXT_PUBLIC_BOLDMINT_TRANSACTION_FEE_PERCENTAGE) /
+        100;
       const creatorAmmount = totalSOLAmount - boldMintAmmount;
+      console.log("BoldMint ammount", boldMintAmmount);
+      console.log("Creator ammount", creatorAmmount);
       //*1 TRANSAKCIJA S 2 TRANSFERA U POZADINI -> USER CE TREBAT POTPISAT SAMO 1 TRANSAKCIJU NA totalAmmount IZNOS
       const transfer1 = SystemProgram.transfer({
         fromPubkey: supporterEntity.publicKey,
         toPubkey: boldMintAddress,
         lamports: boldMintAmmount * LAMPORTS_PER_SOL,
       });
-
       const transfer2 = SystemProgram.transfer({
         fromPubkey: supporterEntity.publicKey,
         toPubkey: creatorAddress,
         lamports: creatorAmmount * LAMPORTS_PER_SOL,
       });
       const transaction = new Transaction().add(transfer1, transfer2);
+      //TODO -> ERROR HANDLING
       const signature = await sendAndConfirmTransaction(
         connection,
         transaction,
         [supporterEntity]
       );
       console.log("Transaction successful with signature: ", signature);
+      const supporterBalance = await connection.getBalance(
+        supporterEntity.publicKey
+      );
+      console.log(
+        `Supporter balance: ${supporterBalance / LAMPORTS_PER_SOL}  SOL`
+      );
+      const creatorBalance = await connection.getBalance(creatorAddress);
+      console.log(`Creator balance: ${creatorBalance / LAMPORTS_PER_SOL}  SOL`);
+      const boldMintBalance = await connection.getBalance(boldMintAddress);
+      console.log(
+        `BoldMint balance: ${boldMintBalance / LAMPORTS_PER_SOL}  SOL`
+      );
     }
   };
 
