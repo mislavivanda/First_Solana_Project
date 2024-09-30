@@ -39,7 +39,7 @@ const Header = () => {
       <div className="hidden sm:flex items-center justify-end flex-grow">
         {session ? (
           <>
-            <SolanaWallet />
+            <SolanaWallet classes="mr-2" />
             <Avatar firstLetter={session.userData.name[0].toUpperCase()} />
             <Dropdown />
           </>

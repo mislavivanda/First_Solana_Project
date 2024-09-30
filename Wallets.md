@@ -2,16 +2,18 @@
 
 ### BoldMint
 
--PublicKey: D6nLmCxSFxTv8szEq8X5qzFQBC7ApTxkTcNfQN5mAZBZ
--PrivateKey: 5CupvogTX5PxstxUsV8pjMjXYHvTRNMqktsxBzujdy1EZviR5W4pYHTt6nFWa6u3S88ZxFmLuH7g6iUppLDji4Ef
+-PublicKey: sB85PxzfTM5p6mG3WTkx3R1azGMkYMY2WcbFP98jbuD
+-PrivateKey: wJ5CGbcQgSzKqWECx8FXWa1jdwEsSWryNY8G3EpsCPvhHx7hYAUJ487syPNrhs45M5zFRBqzyFJbhHPQXeXnGzF
 
 ### CreatorX
 
--PublicKey: 8yFpkxRaJUNYonKTF99XmfMR7kAMG4ZTMH466bxR9PJc
+-PublicKey: 2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX
 
-- PrivateKey: 3xPNquRM6c3KMojDrnf7FL57TmLTDEC8WJ58gL4CXZCCpN3XKKtJb3Zc8H9qevhafFbKwztuhWAuehmdg1QSKr5i
+- PrivateKey: 2mgV6f8hUX8fqQSruKYRnZcyVJ92NLG7CKRR3WiMFYcPF5ivTcmgC6cciF9ivKBJbD34naJsj15FAhwfQH9f8tQj
 
 ### SupporterX
 
 -PublicKey: ASZGV94JK6weZqhiSL6HDoJH8w6ES9GuHUCG5jFa3tnQ
 -PrivateKey: 4xhMndzBPbjqUox6HafV3KHtfAGfVtwL2usXwfchMKryDPHDKtftcY3tiibuUx4uUDmZiqjCdXWcGbVVUeArykyi
+
+PASS -> g_9ewyk:aMTdia!

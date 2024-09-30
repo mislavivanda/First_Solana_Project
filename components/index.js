@@ -13,6 +13,7 @@ import CreatorCard from "./creatorCard";
 import SelectInput from "./select";
 import Widget from "./widget";
 import PostCard from "./post";
+import Alert from "./Alert";
 
 export {
   Button,
@@ -30,4 +31,5 @@ export {
   SelectInput,
   Widget,
   PostCard,
+  Alert,
 };

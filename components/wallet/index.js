@@ -4,11 +4,10 @@ import {
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import { useWalletMultiButton } from "@solana/wallet-adapter-base-ui";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
-const SolanaWallet = () => {
+const SolanaWallet = ({ classes }) => {
   const { connection } = useConnection(); //*CONNECTION CONTEXT OBJEKT VEZAN UZ POVEZANI WALLET
   const { publicKey } = useWallet(); //*PUBLIC KEY WALLETA
   useEffect(() => {
@@ -35,7 +34,7 @@ const SolanaWallet = () => {
 
   return (
     <WalletModalProvider>
-      <div className="flex flex-col sm:flex-row">
+      <div className={`flex flex-col sm:flex-row ${classes || ""}`}>
         {(buttonState === "connected" || buttonState === "has-wallet") && (
           <WalletDisconnectButton />
         )}

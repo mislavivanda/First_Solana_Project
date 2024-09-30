@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import SupportIcon from "../../assets/supportIcon";
-import { Avatar, Button, PostCard, Popup } from "../../components";
+import { Avatar, Button, PostCard, Popup, Alert } from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
   PublicKey,
   SystemProgram,
   Transaction,
-  sendAndConfirmTransaction,
   LAMPORTS_PER_SOL,
   Keypair,
 } from "@solana/web3.js";
@@ -26,8 +25,11 @@ const AboutCreator = ({ creatorId }) => {
   const [screenWidthSize, setScreenWidthSize] = useState(false);
   const [walletNotConnectedModalOpen, setWalletNotConnectedModalOpen] =
     useState(false);
+  const [supportTransactionLoading, setSupportTransactionLoading] =
+    useState(false);
+  const alertRef = useRef(null);
 
-  const { publicKey } = useWallet();
+  const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
 
   useEffect(() => {
@@ -35,20 +37,17 @@ const AboutCreator = ({ creatorId }) => {
   }, []);
 
   const handleSupportButtonClick = async () => {
-    console.log("handleSupportButtonClick", process.env);
-    if (publicKey) {
+    console.log("handleSupportButtonClick", alertRef);
+    if (!publicKey) {
       setWalletNotConnectedModalOpen(true);
     } else {
-      const supporterPrivateKey =
-        "4xhMndzBPbjqUox6HafV3KHtfAGfVtwL2usXwfchMKryDPHDKtftcY3tiibuUx4uUDmZiqjCdXWcGbVVUeArykyi";
-      const supporterPublicKey = "ASZGV94JK6weZqhiSL6HDoJH8w6ES9GuHUCG5jFa3tnQ";
-      const supporterPrivateKeyArray = bs58.decode(supporterPrivateKey);
-      const supporterEntity = Keypair.fromSecretKey(supporterPrivateKeyArray);
+      setSupportTransactionLoading(true);
+      const supporterPublicKey = publicKey;
       const boldMintAddress = new PublicKey(
         process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
       );
       const creatorAddress = new PublicKey(
-        "FdkdDo7y8qMGWsa1ZACgNvqCrE85s8Y8YC7L5f2bnZn1"
+        "2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX"
       );
       const totalSOLAmount = 1.3;
       const boldMintAmmount =
@@ -60,35 +59,39 @@ const AboutCreator = ({ creatorId }) => {
       console.log("Creator ammount", creatorAmmount);
       //*1 TRANSAKCIJA S 2 TRANSFERA U POZADINI -> USER CE TREBAT POTPISAT SAMO 1 TRANSAKCIJU NA totalAmmount IZNOS
       const transfer1 = SystemProgram.transfer({
-        fromPubkey: supporterEntity.publicKey,
+        fromPubkey: supporterPublicKey,
         toPubkey: boldMintAddress,
         lamports: boldMintAmmount * LAMPORTS_PER_SOL,
       });
       const transfer2 = SystemProgram.transfer({
-        fromPubkey: supporterEntity.publicKey,
+        fromPubkey: supporterPublicKey,
         toPubkey: creatorAddress,
         lamports: creatorAmmount * LAMPORTS_PER_SOL,
       });
       const transaction = new Transaction().add(transfer1, transfer2);
-      //TODO -> ERROR HANDLING
-      const signature = await sendAndConfirmTransaction(
-        connection,
-        transaction,
-        [supporterEntity]
-      );
-      console.log("Transaction successful with signature: ", signature);
-      const supporterBalance = await connection.getBalance(
-        supporterEntity.publicKey
-      );
-      console.log(
-        `Supporter balance: ${supporterBalance / LAMPORTS_PER_SOL}  SOL`
-      );
-      const creatorBalance = await connection.getBalance(creatorAddress);
-      console.log(`Creator balance: ${creatorBalance / LAMPORTS_PER_SOL}  SOL`);
-      const boldMintBalance = await connection.getBalance(boldMintAddress);
-      console.log(
-        `BoldMint balance: ${boldMintBalance / LAMPORTS_PER_SOL}  SOL`
-      );
+      try {
+        const signature = await sendTransaction(transaction, connection);
+        console.log("Transaction successful with signature: ", signature);
+        setSupportTransactionLoading(false);
+        alertRef.current.showAlert("Transaction success", "success");
+        const supporterBalance = await connection.getBalance(
+          supporterPublicKey
+        );
+        console.log(
+          `Supporter balance: ${supporterBalance / LAMPORTS_PER_SOL}  SOL`
+        );
+        const creatorBalance = await connection.getBalance(creatorAddress);
+        console.log(
+          `Creator balance: ${creatorBalance / LAMPORTS_PER_SOL}  SOL`
+        );
+        const boldMintBalance = await connection.getBalance(boldMintAddress);
+        console.log(
+          `BoldMint balance: ${boldMintBalance / LAMPORTS_PER_SOL}  SOL`
+        );
+      } catch (error) {
+        alertRef.current.showAlert("Transaction error", "error");
+        setSupportTransactionLoading(false);
+      }
     }
   };
 
@@ -148,9 +151,18 @@ const AboutCreator = ({ creatorId }) => {
                   <Button
                     onClick={handleSupportButtonClick}
                     type="filled"
-                    classes="mt-5 text-xl"
+                    classes="mt-5 text-xl relative"
                   >
-                    {`Support for 1.3SOL`}
+                    <div
+                      className={`${
+                        supportTransactionLoading ? "invisible" : ""
+                      }`}
+                    >
+                      Support for 1.3 SOL
+                    </div>
+                    {supportTransactionLoading ? (
+                      <div className="text-xl w-[1.25rem] h-[1.25rem] border-white border-solid border-[0.25em] border-r-transparent rounded-[50%] absolute left-[calc(50%-0.625rem) top-[0.5rem] inline-block align-text-bottom animate-spin" />
+                    ) : null}
                   </Button>
                 </div>
                 <Popup
@@ -186,6 +198,7 @@ const AboutCreator = ({ creatorId }) => {
           }
         </div>
       </article>
+      <Alert ref={alertRef} delay={3000} />
     </section>
   );
 };
