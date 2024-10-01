@@ -14,6 +14,7 @@ import SelectInput from "./select";
 import Widget from "./widget";
 import PostCard from "./post";
 import Alert from "./Alert";
+import WalletNotConnectedPopup from "./walletNotConnectedPopup";
 
 export {
   Button,
@@ -32,4 +33,5 @@ export {
   Widget,
   PostCard,
   Alert,
+  WalletNotConnectedPopup,
 };

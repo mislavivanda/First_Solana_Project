@@ -1,6 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import SupportIcon from "../../assets/supportIcon";
-import { Avatar, Button, PostCard, Popup, Alert } from "../../components";
+import {
+  Avatar,
+  Button,
+  PostCard,
+  WalletNotConnectedPopup,
+  Alert,
+} from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
@@ -8,9 +14,7 @@ import {
   SystemProgram,
   Transaction,
   LAMPORTS_PER_SOL,
-  Keypair,
 } from "@solana/web3.js";
-import bs58 from "bs58";
 
 const AboutCreator = ({ creatorId }) => {
   const creatorData = {
@@ -22,7 +26,6 @@ const AboutCreator = ({ creatorId }) => {
       "Hi, I'm John Doe, currently working as a hedge fund manager and in my free time like to write various analysis about market conditions and predictions. Hope you'll enjoy them",
     supportersCount: 16,
   };
-  const [screenWidthSize, setScreenWidthSize] = useState(false);
   const [walletNotConnectedModalOpen, setWalletNotConnectedModalOpen] =
     useState(false);
   const [supportTransactionLoading, setSupportTransactionLoading] =
@@ -31,10 +34,6 @@ const AboutCreator = ({ creatorId }) => {
 
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
-
-  useEffect(() => {
-    setScreenWidthSize(window.innerWidth);
-  }, []);
 
   const handleSupportButtonClick = async () => {
     console.log("handleSupportButtonClick", alertRef);
@@ -161,38 +160,14 @@ const AboutCreator = ({ creatorId }) => {
                       Support for 1.3 SOL
                     </div>
                     {supportTransactionLoading ? (
-                      <div className="text-xl w-[1.25rem] h-[1.25rem] border-white border-solid border-[0.25em] border-r-transparent rounded-[50%] absolute left-[calc(50%-0.625rem) top-[0.5rem] inline-block align-text-bottom animate-spin" />
+                      <div className="text-xl w-[1.25rem] h-[1.25rem] border-white border-solid border-[0.25em] border-r-transparent rounded-[50%] absolute left-[calc(50%-0.625rem)] top-[0.5rem] inline-block align-text-bottom animate-spin" />
                     ) : null}
                   </Button>
                 </div>
-                <Popup
+                <WalletNotConnectedPopup
                   isOpen={walletNotConnectedModalOpen}
-                  closeModal={setWalletNotConnectedModalOpen}
-                >
-                  <div className="min-w-[300px]">
-                    <h3 className="font-bold">Please Connect Your Wallet</h3>
-                    <div className="my-1 bg-primary-color w-full h-[2px]" />
-                    <p className="mt-1">
-                      To continue, you need to connect your Solana wallet.
-                    </p>
-                    <p className="mt-1">
-                      {screenWidthSize < 640 ? (
-                        <span>
-                          Tap the{" "}
-                          <span className="font-bold">menu icon (☰)</span> to
-                          open the navigation and then select{" "}
-                          <span className="font-bold">Connect Wallet</span>
-                        </span>
-                      ) : (
-                        <span>
-                          You can find the{" "}
-                          <span className="font-bold">Connect Wallet</span>{" "}
-                          button in the navigation bar at the top.
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </Popup>
+                  setIsOpen={setWalletNotConnectedModalOpen}
+                />
               </>
             )
           }
