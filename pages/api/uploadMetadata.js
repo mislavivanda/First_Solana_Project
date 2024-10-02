@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  //TODO -> AUTENTIKACIJA SVIH RUTA(getSession) + PROVJERA ISPRAVNOSTI METADATA FORMATA
   if (req.method !== "POST") {
     return res
       .status(405)

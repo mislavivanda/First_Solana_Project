@@ -2,13 +2,6 @@ import { useRef, useState } from "react";
 import { Button, Alert, WalletNotConnectedPopup } from "../components";
 import TagsInput from "../modules/tagsInput";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import {
-  Metaplex,
-  keypairIdentity,
-  irysStorage,
-} from "@metaplex-foundation/js";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import bs58 from "bs58";
 
 const BecomeCreator = () => {
   const alertRef = useRef(null);
@@ -17,8 +10,7 @@ const BecomeCreator = () => {
   const [walletNotConnectedModalOpen, setWalletNotConnectedModalOpen] =
     useState(false);
 
-  const { publicKey, sendTransaction } = useWallet();
-  const { connection } = useConnection();
+  const { publicKey } = useWallet();
 
   const uploadMetadata = async () => {
     try {
@@ -73,44 +65,21 @@ const BecomeCreator = () => {
         //*CREATE COLLECTION
         //*on a technical level, the blockchain is minting an NFT to represent that collection. However, this NFT is special because it is designated as a collection and can have other NFTs tied to it
         //*Even though we are not minting individual NFTs as part of the collection yet, the collection itself is technically an NFT with its own metadata. This NFT will act as the "collection parent" for the other NFTs that will be minted later under it.
-        //TODO -> PREBACIT NA SERVER ISTO
-        const boldMintAddress = new PublicKey(
-          process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
-        );
-        console.log(
-          "boldMintAddress",
-          boldMintAddress,
-          process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
-        );
-        const mintAuthority = Keypair.fromSecretKey(
-          bs58.decode(
-            "wJ5CGbcQgSzKqWECx8FXWa1jdwEsSWryNY8G3EpsCPvhHx7hYAUJ487syPNrhs45M5zFRBqzyFJbhHPQXeXnGzF"
-          )
-        );
-        const metaplex = Metaplex.make(connection)
-          .use(keypairIdentity(mintAuthority)) //*CREATOR PLACA ZA TRANSAKCIJU
-          .use(
-            irysStorage() //*decentralized storage network
-          );
-        console.log(mintAuthority);
-        const { nft: collectionNft } = await metaplex.nfts().create({
-          uri: collectionMetadata.uri,
-          name: collectionMetadata.name,
-          symbol: collectionMetadata.symbol,
-          sellerFeeBasisPoints: collectionMetadata.sellerFeeBasisPoints,
-          creators: collectionMetadata.creators.map((creator) => ({
-            ...creator,
-            address: new PublicKey(creator.address),
-          })),
-          isCollection: true, //*OZNACI NFT KAO COLLECTION NFT
-          mintAuthority: mintAuthority, //*BoldMint JE AUTHORITY -> JEDINI MOZE MINTAT
-          updateAuthority: mintAuthority, //*BoldMint JE AUTHORITY -> JEDINI MOZE UPDATEAT(AKO ZATREBA)
-          collectionAuthority: mintAuthority,
-          tokenOwner: mintAuthority.publicKey,
+        const response = await fetch("/api/createCreatorCollection", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            collectionMetadata,
+          }),
         });
-        console.log(
-          `Collection created with mint: ${collectionNft.address.toBase58()}`
-        );
+        if (!response.ok) {
+          throw new Error("Failed to create collection");
+        }
+
+        const { collectionAddress } = await response.json();
+        console.log("Collection created: ", collectionAddress);
         setSubmitTransactionLoading(false);
       } catch (error) {
         console.log("Error", error);

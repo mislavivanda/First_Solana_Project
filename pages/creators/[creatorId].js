@@ -48,7 +48,7 @@ const AboutCreator = ({ creatorId }) => {
       const creatorAddress = new PublicKey(
         "2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX"
       );
-      const totalSOLAmount = 1.3;
+      const totalSOLAmount = 0.5;
       const boldMintAmmount =
         (totalSOLAmount *
           process.env.NEXT_PUBLIC_BOLDMINT_TRANSACTION_FEE_PERCENTAGE) /
@@ -71,6 +71,21 @@ const AboutCreator = ({ creatorId }) => {
       try {
         const signature = await sendTransaction(transaction, connection);
         console.log("Transaction successful with signature: ", signature);
+        const response = await fetch("/api/mintCollectionNFT", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
+            supporterAddress: supporterPublicKey,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to create collection");
+        }
+        const { mintedNftAddress } = await response.json();
+        console.log("NFT minted: ", mintedNftAddress);
         setSupportTransactionLoading(false);
         alertRef.current.showAlert("Transaction success", "success");
         const supporterBalance = await connection.getBalance(
