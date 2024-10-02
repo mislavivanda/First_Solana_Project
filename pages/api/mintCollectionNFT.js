@@ -46,7 +46,9 @@ export default async function handler(req, res) {
     const { nft } = await metaplex.nfts().create({
       name: `${collectionNft.name}`,
       uri: collectionNft.uri,
+      symbol: collectionNft.symbol,
       sellerFeeBasisPoints: collectionNft.sellerFeeBasisPoints,
+      creators: collectionNft.creators,
       collection: collectionPublicKey,
       tokenOwner: supporterPublicKey,
     });
