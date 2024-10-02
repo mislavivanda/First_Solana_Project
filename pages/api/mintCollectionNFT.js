@@ -52,6 +52,13 @@ export default async function handler(req, res) {
       collection: collectionPublicKey,
       tokenOwner: supporterPublicKey,
     });
+    //*VERIFY DA JE MINTANI NFT DIO KOLEKCIJE(ZASEBNA DODATNA TRANSAKCIJA) -> https://developers.metaplex.com/token-metadata/collections
+    await metaplex.nfts().verifyCollection({
+      mintAddress: nft.address,
+      collectionMintAddress: collectionPublicKey,
+      isSizedCollection: true,
+      collectionAuthority: boldMintAuthority,
+    });
     res.status(200).json({
       mintedNftAddress: nft.address.toBase58(),
     });

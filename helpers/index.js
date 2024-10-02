@@ -38,3 +38,32 @@ export const parseBlogDate = (rawTime) => {
     rawTime.getFullYear()
   );
 };
+
+//helper method that calls contentful API
+export async function fetchGraphQLContentfulData(query, variables = {}) {
+  //with no preview option
+  return fetch(
+    //process.env dostupni samo prilikom pozivanja na serveru(unutar api) i statickog buildanja koje se isto odvija na serveru
+    `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
+        query: query,
+        variables: variables,
+      }),
+    }
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      if (response.errors) {
+        throw new Error(response.errors[0].message);
+      } else return response;
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
