@@ -113,7 +113,7 @@ const BecomeCreator = () => {
         </label>
         <InputField disable value={publicKey && publicKey.toBase58()} />
       </div>
-      {/*TODO -> MOZE ODABRAT PARAMETRE SVOJE NFT KOLEKCIJE? */}
+      {/*TODO -> MOZE ODABRAT PARAMETRE SVOJE NFT KOLEKCIJE -> IME, SIMBOL I JAVNI LINK NA SLIKU(PROVJERA EKSTENZIJE) */}
       <div className="flex items-center mb-4">
         <input type="checkbox" className="mr-2 cursor-pointer" />
         <span>

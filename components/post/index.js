@@ -1,23 +1,5 @@
 import { parseBlogDate } from "../../helpers";
-import { H2 } from "./heading.js";
-import { P } from "./text.js";
-import { Ul, Li } from "./list.js";
-import { Quote } from "./quote.js";
-import { ResponsiveImage } from "./image.js";
-import dynamic from "next/dynamic";
-//*PREVENT HYDRATION ERROR
-const ReactMarkdown = dynamic(() => import("react-markdown"), {
-  ssr: false,
-});
-
-const customComponents = {
-  h2: H2(""),
-  p: P(""),
-  ul: Ul(""),
-  li: Li(""),
-  blockquote: Quote(""),
-  img: ResponsiveImage,
-};
+import MarkdownViewer from "../markdownViewer/index.js";
 
 const PostCard = ({ blogData }) => {
   return (
@@ -26,8 +8,7 @@ const PostCard = ({ blogData }) => {
         WallStreet rise
       </div>
       <div className="text-lg flex-grow my-2 overflow-y-auto">
-        <ReactMarkdown
-          components={customComponents}
+        <MarkdownViewer
           //eslint-disable-next-line react/no-children-prop
           children={`Ciro Immobile has made history and became S.S. Lazio’s undisputed best scorer with his 160th goal scored in the UEFA Europa League match against Marseille, on the 4th November, 2021—surpassing previous record holder and football legend, Silvio Piola.
 

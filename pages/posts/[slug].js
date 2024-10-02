@@ -1,24 +1,5 @@
-import { Avatar } from "../../components/index.js";
-import { H2 } from "../../components/post/heading.js";
-import { P } from "../../components/post/text.js";
-import { Ul, Li } from "../../components/post/list.js";
-import { Quote } from "../../components/post/quote.js";
-import { ResponsiveImage } from "../../components/post/image.js";
+import { Avatar, MarkdownViewer } from "../../components/index.js";
 import { parseBlogDate } from "../../helpers/index.js";
-import dynamic from "next/dynamic";
-//*PREVENT HYDRATION ERROR
-const ReactMarkdown = dynamic(() => import("react-markdown"), {
-  ssr: false,
-});
-
-const customComponents = {
-  h2: H2(""),
-  p: P(""),
-  ul: Ul(""),
-  li: Li(""),
-  blockquote: Quote(""),
-  img: ResponsiveImage,
-};
 
 const PostPage = () => {
   return (
@@ -103,8 +84,7 @@ const PostPage = () => {
             <hr className="mt-[-2px] w-[200px] h-[2px] bg-primary-color" />
           </div>
           <section className="mt-10 text-lg">
-            <ReactMarkdown
-              components={customComponents}
+            <MarkdownViewer
               //eslint-disable-next-line react/no-children-prop
               children={`Ciro Immobile has made history and became S.S. Lazio’s undisputed best scorer with his 160th goal scored in the UEFA Europa League match against Marseille, on the 4th November, 2021—surpassing previous record holder and football legend, Silvio Piola.
 

@@ -1,26 +1,5 @@
 import { useEffect, useState } from "react";
-import { H2 } from "../components/post/heading.js";
-import { P } from "../components/post/text.js";
-import { Ul, Li } from "../components/post/list.js";
-import { Quote } from "../components/post/quote.js";
-import { ResponsiveImage } from "../components/post/image.js";
-import dynamic from "next/dynamic";
-import { Button } from "../components/index.js";
-//*PREVENT HYDRATION ERROR
-const ReactMarkdown = dynamic(() => import("react-markdown"), {
-  ssr: false,
-});
-
-//TODO -> ReactMarkdown PREBACIT U KOMPONENTU + DODAT DODATNE HEADING ELEMEMNT ZA SVAKI LEVEL I VIDI JEL JOS KOJU KOMPONENTU TREBA(https://www.markdownguide.org/basic-syntax/)
-
-const customComponents = {
-  h2: H2(""),
-  p: P(""),
-  ul: Ul(""),
-  li: Li(""),
-  blockquote: Quote(""),
-  img: ResponsiveImage,
-};
+import { Button, MarkdownViewer } from "../components/index.js";
 
 const CreateContent = () => {
   const [markdown, setMarkdown] = useState("");
@@ -52,8 +31,7 @@ const CreateContent = () => {
       </div>
       {/*MARKDOWN PREVIEW */}
       <div className="markdown-containers p-4 rounded-md bg-white overflow-y-auto">
-        <ReactMarkdown
-          components={customComponents}
+        <MarkdownViewer
           //eslint-disable-next-line react/no-children-prop
           children={markdown}
         />

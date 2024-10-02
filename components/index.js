@@ -16,6 +16,7 @@ import PostCard from "./post";
 import Alert from "./Alert";
 import WalletNotConnectedPopup from "./walletNotConnectedPopup";
 import LoadingButton from "./loadingButton";
+import MarkdownViewer from "./markdownViewer";
 
 export {
   Button,
@@ -36,4 +37,5 @@ export {
   Alert,
   WalletNotConnectedPopup,
   LoadingButton,
+  MarkdownViewer,
 };
