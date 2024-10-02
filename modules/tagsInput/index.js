@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { InputField } from "../../components";
 const TagsInput = () => {
   const [inputValue, setInputValue] = useState("");
   const [tags, setTags] = useState([]);
@@ -29,8 +30,7 @@ const TagsInput = () => {
     <div className="mb-4">
       <label className="mb-1 inline-block font-semibold">Tags</label>
       <div className="flex-col">
-        <input
-          className="block outline-none w-full pt-2 pb-2 pl-3 pr-3 focus:border-primary-color border-[2px] border-solid transition-colors rounded-md"
+        <InputField
           type="text"
           value={inputValue}
           onChange={handleInputChange}

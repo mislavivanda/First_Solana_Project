@@ -25,7 +25,8 @@ const Register = () => {
             Register
           </h1>
           <h3 className="mt-8 text-xl mx-5 sm:mx-10 max-w-[280px] text-left">
-            Join BoldMint!
+            Join BoldMint to turn your creativity into NFTs, support your
+            favorite creators, and experience the future of content ownership!{" "}
           </h3>
         </div>
       </div>

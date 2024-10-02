@@ -1,4 +1,3 @@
-
 const InputField = ({
   placeholder,
   id,
@@ -7,18 +6,20 @@ const InputField = ({
   disable,
   step,
   min,
-  onInput,
+  onChange,
+  onKeyDown,
   value,
 }) => {
   return (
     <>
       <input
-        className={`shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-600 leading-tight focus:outline-none focus:shadow-outline ${classes}`}
+        className={`block outline-none w-full pt-2 pb-2 pl-3 pr-3 focus:border-primary-color border-[2px] border-solid transition-colors rounded-md ${classes}`}
         id={id}
         type={type}
         placeholder={placeholder}
         disabled={disable}
-        onInput={onInput}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
         step={step}
         min={min}
         value={value}

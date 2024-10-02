@@ -4,6 +4,7 @@ import {
   Alert,
   WalletNotConnectedPopup,
   LoadingButton,
+  InputField,
 } from "../components";
 import TagsInput from "../modules/tagsInput";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
@@ -110,8 +111,7 @@ const BecomeCreator = () => {
         <label className="mb-1 inline-block font-semibold">
           Wallet address
         </label>
-        {/*TODO -> PREBCI OVAJ STIL U InputField */}
-        <input className="block outline-none w-full pt-2 pb-2 pl-3 pr-3 focus:border-primary-color border-[2px] border-solid transition-colors rounded-md" />
+        <InputField />
       </div>
       {/*TODO -> MOZE ODABRAT PARAMETRE SVOJE NFT KOLEKCIJE? */}
       <div className="flex items-center mb-4">
