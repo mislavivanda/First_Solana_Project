@@ -4,8 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createSurname, capitalizeFirstLetter } from "../../../helpers";
 //CATCH ALL ROUTE(FILENAME [...NAME].js)-> All requests to /api/auth/* (signIn, callback, signOut, etc.) will automatically be handled by NextAuth.js.
-
-export default NextAuth({
+const authOptions = {
   session: {
     jwt: true,
   },
@@ -109,4 +108,6 @@ export default NextAuth({
       }
     },
   },
-});
+};
+export { authOptions };
+export default NextAuth(authOptions);

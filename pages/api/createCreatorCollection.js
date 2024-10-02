@@ -4,9 +4,10 @@ import {
   irysStorage,
 } from "@metaplex-foundation/js";
 import { Keypair, Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { withAuthRoute } from "../../lib/authMiddleware";
 import bs58 from "bs58";
 
-export default async function handler(req, res) {
+export default withAuthRoute(async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -26,7 +27,9 @@ export default async function handler(req, res) {
       );
 
     const { collectionMetadata } = req.body;
-
+    //!OSIGURANJE OD NAPADA:
+    //*1) PROVJERI I VRIJEDNOSTI seller_fee_basis_points(STAVIT U ENV) I creators PARAMETARA TAKO DA AUTENTICIRANI USER NE MOZE STAVLJAT STA ZELI(NPR U POSTMAN)
+    //*2) PROTECTION OD POZIVANJA API-A KOJI BI MINTA DOK NE ISPRAZNI NAS WALLET -> RATE LIMITER ILI OGRANICIT DA USER MOZE IMAT MAX 1 ILI ODREDEN BROJ KOLEKCIJA PO WALLETU
     if (
       !collectionMetadata ||
       !(
@@ -61,4 +64,4 @@ export default async function handler(req, res) {
     console.error("Error creating NFT:", error);
     res.status(500).json({ error: "Failed to create NFT" });
   }
-}
+});

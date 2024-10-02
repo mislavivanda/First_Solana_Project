@@ -1,5 +1,6 @@
-export default async function handler(req, res) {
-  //TODO -> AUTENTIKACIJA SVIH RUTA(getSession) + PROVJERA ISPRAVNOSTI METADATA FORMATA
+import { withAuthRoute } from "../../lib/authMiddleware";
+
+export default withAuthRoute(async function handler(req, res) {
   if (req.method !== "POST") {
     return res
       .status(405)
@@ -7,7 +8,23 @@ export default async function handler(req, res) {
   }
 
   try {
+    //!OSIGURANJE OD NAPADA:
+    //*NAPAD U KOJEM USER ISKORISTAVA NAS PINATA ACCOUNT DA UPLOADA METAPODATKE -> ZASTITA PREKO RATE LIMITERA
     const metadata = req.body;
+
+    if (
+      !metadata ||
+      !(
+        Object.hasOwn(collectionMetadata, "name") &&
+        Object.hasOwn(collectionMetadata, "symbol") &&
+        Object.hasOwn(collectionMetadata, "uri") &&
+        Object.hasOwn(collectionMetadata, "seller_fee_basis_points") &&
+        Object.hasOwn(collectionMetadata, "creators")
+      )
+    ) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
+
     const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
 
     const options = {
@@ -34,4 +51,4 @@ export default async function handler(req, res) {
     console.error("Error uploading metadata to IPFS:", error);
     res.status(500).json({ success: false, error: error.message });
   }
-}
+});

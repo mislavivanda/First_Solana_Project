@@ -4,14 +4,17 @@ import {
   irysStorage,
 } from "@metaplex-foundation/js";
 import { Keypair, Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { withAuthRoute } from "../../lib/authMiddleware";
 import bs58 from "bs58";
 
-export default async function handler(req, res) {
+export default withAuthRoute(async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
+    //!OSIGURANJE OD NAPADA:
+    //*1) PROTECTION OD POZIVANJA API-A KOJI BI MINTA NFT-OVE IZVAN NASEG APPA(KROZ POSTMAN) TAKO DA ZAOBIDE POSTUPAK TRANSFERA KOJI PRETHODI OVOME POZIVU U APP -> USER MOZE IMAT SAMO 1 NFT IZ KOLEKCIJE -> U BAZI CE BITI SPREMLJENO DA JE OBAVLJENA TRANSAKCIJA(signature) ZA ZADANU KOLEKCIJU(publicKey ADRESE) -> AKO NE POSTOJI TA TRANSAKCIJA ZA TAJ COLLECTION ONDA TRANSFER NIJE OBAVLJEN -> AKO OCE MINTAT IZVANKA BEZ DA JE NAPRAVIJA TU TRANSAKCIJU ONDA CE BITI ODBIJEN
     const connection = new Connection(clusterApiUrl("devnet"));
 
     //!MINT MOZE ODRADITI SAMO AUTHORITY KOLEKCIJE -> BoldMint
@@ -66,4 +69,4 @@ export default async function handler(req, res) {
     console.error("Error minting NFT:", error);
     res.status(500).json({ error: "Failed to mint NFT" });
   }
-}
+});

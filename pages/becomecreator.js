@@ -111,7 +111,7 @@ const BecomeCreator = () => {
         <label className="mb-1 inline-block font-semibold">
           Wallet address
         </label>
-        <InputField />
+        <InputField disable value={publicKey && publicKey.toBase58()} />
       </div>
       {/*TODO -> MOZE ODABRAT PARAMETRE SVOJE NFT KOLEKCIJE? */}
       <div className="flex items-center mb-4">
