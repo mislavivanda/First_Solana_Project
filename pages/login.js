@@ -1,4 +1,4 @@
-import { Button, InputField, Label, Spinner } from "../components";
+import { Button, FormGroup, InputField, Label, Spinner } from "../components";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -81,10 +81,10 @@ const Login = () => {
             }`}
           >
             <form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
-              <div className="mb-4">
+              <FormGroup>
                 <Label forName="e-mail">E-mail</Label>
                 <InputField id="user-email" type="text" placeholder="E-mail" />
-              </div>
+              </FormGroup>
               <div className="mb-6">
                 <Label forName="password">Password</Label>
                 <InputField

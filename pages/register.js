@@ -1,4 +1,4 @@
-import { Button, InputField, Label } from "../components";
+import { Button, FormGroup, InputField, Label } from "../components";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -38,10 +38,10 @@ const Register = () => {
           }`}
         >
           <form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
-            <div className="mb-4">
+            <FormGroup>
               <Label forName="username">Name</Label>
               <InputField id="username" type="text" placeholder="Name" />
-            </div>
+            </FormGroup>
             <div className="mb-6">
               <Label forName="email">E-mail</Label>
               <InputField id="email" type="text" placeholder="E-mail" />

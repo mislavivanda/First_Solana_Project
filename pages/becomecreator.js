@@ -5,6 +5,8 @@ import {
   WalletNotConnectedPopup,
   LoadingButton,
   InputField,
+  Label,
+  FormGroup,
 } from "../components";
 import TagsInput from "../modules/tagsInput";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
@@ -97,23 +99,32 @@ const BecomeCreator = () => {
 
   return (
     <div className="max-w-[400px] rounded-[0.5rem] pt-2 pb-2 pl-4 pr-4 ml-auto mr-auto">
-      <div className="mb-4">
-        <label className="mb-1 inline-block font-semibold">About you</label>
+      <FormGroup>
+        <Label>About you</Label>
         <textarea
-          className="mt-4 p-2 focus:border-primary-color border-[1px] border-solid transition-colors rounded-md"
+          className="w-full p-2 focus:border-primary-color border-[1px] border-solid transition-colors rounded-md"
           placeholder="Short text about you and your interests"
           cols="30"
           rows="5"
         />
-      </div>
+      </FormGroup>
       <TagsInput />
-      <div className="mb-4">
-        <label className="mb-1 inline-block font-semibold">
-          Wallet address
-        </label>
+      <FormGroup>
+        <Label>Collection name</Label>
+        <InputField placeholder="e.g. My collection" />
+      </FormGroup>
+      <FormGroup>
+        <Label>Collection symbol</Label>
+        <InputField placeholder="e.g. MCNFT" />
+      </FormGroup>
+      <FormGroup>
+        <Label>Collection image URI</Label>
+        <InputField placeholder="e.g. https://domain/public_photo.png" />
+      </FormGroup>
+      <FormGroup>
+        <Label>Wallet address</Label>
         <InputField disable value={publicKey && publicKey.toBase58()} />
-      </div>
-      {/*TODO -> MOZE ODABRAT PARAMETRE SVOJE NFT KOLEKCIJE -> IME, SIMBOL I JAVNI LINK NA SLIKU(PROVJERA EKSTENZIJE) */}
+      </FormGroup>
       <div className="flex items-center mb-4">
         <input type="checkbox" className="mr-2 cursor-pointer" />
         <span>

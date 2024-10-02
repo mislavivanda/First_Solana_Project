@@ -2,6 +2,7 @@ import Button from "./button";
 import BurgerNavigation from "./burgerNavigation";
 import InputField from "./inputField";
 import Label from "./label";
+import FormGroup from "./FormGroup";
 import Avatar from "./avatar";
 import Dropdown from "./dropdown";
 import Spinner from "./spinner";
@@ -23,6 +24,7 @@ export {
   BurgerNavigation,
   InputField,
   Label,
+  FormGroup,
   Avatar,
   Dropdown,
   Spinner,

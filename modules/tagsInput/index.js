@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { InputField } from "../../components";
+import { FormGroup, InputField, Label } from "../../components";
 const TagsInput = () => {
   const [inputValue, setInputValue] = useState("");
   const [tags, setTags] = useState([]);
@@ -27,8 +27,8 @@ const TagsInput = () => {
   };
 
   return (
-    <div className="mb-4">
-      <label className="mb-1 inline-block font-semibold">Tags</label>
+    <FormGroup>
+      <Label>Tags</Label>
       <div className="flex-col">
         <InputField
           type="text"
@@ -51,7 +51,7 @@ const TagsInput = () => {
           ))}
         </div>
       </div>
-    </div>
+    </FormGroup>
   );
 };
 

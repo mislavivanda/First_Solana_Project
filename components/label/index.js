@@ -2,7 +2,7 @@ const Label = ({ forName, children, classes }) => {
   return (
     <>
       <label
-        className={`block text-gray-700 text-sm font-bold mb-2 ${classes}`}
+        className={`inline-block text-gray-700 mb-1 font-semibold ${classes}`}
         htmlFor={forName}
       >
         {children}
