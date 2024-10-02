@@ -6,6 +6,7 @@ import {
   PostCard,
   WalletNotConnectedPopup,
   Alert,
+  LoadingButton,
 } from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
@@ -111,6 +112,8 @@ const AboutCreator = ({ creatorId }) => {
 
   const hassSupportedCreator = false;
 
+  //TODO -> DOHVATI CIJENU PREKO API + I KOD POZIVA SUPPORT BUTTON CLICK DA SE SPRIJECI SLUCAJ DA MU TAB OSTAJE OTVOREN I DRZI FIKSNU CIJENU AKO SE CIJENA PROMINILA U MEDUVREMENU
+
   return (
     <section className="mt-4 sm:mt-16">
       <article className="sm:flex max-w-screen-lg mx-auto">
@@ -162,22 +165,12 @@ const AboutCreator = ({ creatorId }) => {
             ) : (
               <>
                 <div className="text-center">
-                  <Button
-                    onClick={handleSupportButtonClick}
-                    type="filled"
-                    classes="mt-5 text-xl relative"
-                  >
-                    <div
-                      className={`${
-                        supportTransactionLoading ? "invisible" : ""
-                      }`}
-                    >
-                      Support for 1.3 SOL
-                    </div>
-                    {supportTransactionLoading ? (
-                      <div className="text-xl w-[1.25rem] h-[1.25rem] border-white border-solid border-[0.25em] border-r-transparent rounded-[50%] absolute left-[calc(50%-0.625rem)] top-[0.5rem] inline-block align-text-bottom animate-spin" />
-                    ) : null}
-                  </Button>
+                  <LoadingButton
+                    onButtonClick={handleSupportButtonClick}
+                    buttonLoading={supportTransactionLoading}
+                    buttonText="Support for 1.3 SOL"
+                    buttonClasses="mt-5 text-xl relative"
+                  />
                 </div>
                 <WalletNotConnectedPopup
                   isOpen={walletNotConnectedModalOpen}

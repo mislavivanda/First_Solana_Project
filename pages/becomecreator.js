@@ -1,5 +1,10 @@
 import { useRef, useState } from "react";
-import { Button, Alert, WalletNotConnectedPopup } from "../components";
+import {
+  Button,
+  Alert,
+  WalletNotConnectedPopup,
+  LoadingButton,
+} from "../components";
 import TagsInput from "../modules/tagsInput";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 
@@ -116,18 +121,12 @@ const BecomeCreator = () => {
         </span>
       </div>
       <div className="flex justify-center text-center">
-        <Button
-          type="filled"
-          onClick={onSubmitButtonClick}
-          classes="mt-5 text-xl relative"
-        >
-          <div className={`${submitTransactionLoading ? "invisible" : ""}`}>
-            Submit
-          </div>
-          {submitTransactionLoading ? (
-            <div className="text-xl w-[1.25rem] h-[1.25rem] border-white border-solid border-[0.25em] border-r-transparent rounded-[50%] absolute left-[calc(50%-0.625rem)] top-[0.5rem] inline-block align-text-bottom animate-spin" />
-          ) : null}
-        </Button>
+        <LoadingButton
+          onButtonClick={onSubmitButtonClick}
+          buttonLoading={submitTransactionLoading}
+          buttonText="Submit"
+          buttonClasses="mt-5 text-xl relative"
+        />
       </div>
       <WalletNotConnectedPopup
         isOpen={walletNotConnectedModalOpen}
