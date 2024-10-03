@@ -26,6 +26,8 @@ const AboutCreator = ({ creatorId }) => {
     useState(false);
   const [hasSupportedCreator, setHasSupportedCreator] = useState(false);
   const [creatorDataLoading, setCreatorDataLoading] = useState(true);
+  const [supportSolPrice, setSupportSolPrice] = useState(null);
+  const [supportersCount, setSupportersCount] = useState(0);
   const [creatorData, setCreatorData] = useState({
     name: "John",
     surname: "Doe",
@@ -42,17 +44,29 @@ const AboutCreator = ({ creatorId }) => {
   const { connection } = useConnection();
   const { data: sessionData, status } = useSession();
 
+  const [useEffectCalled, setUseEffectCalled] = useState(false);
+
   useEffect(() => {
-    if (status === "authenticated") {
-      //*AKO JE RIJEC O CREATORU ONDA PRIKAZI STRANICU KAO ZA SUPPORTERA
-      if (sessionData.isCreator) setHasSupportedCreator(true);
+    if (status === "authenticated" && !useEffectCalled) {
+      setUseEffectCalled(true);
       //*U SUPROTNOME POZOVI API KOJI PROVJERAVA JE LI USER SUPPORTAO CREATORA
       const fetchData = async () => {
         try {
+          //*ZA CREATOR VIEW POTREBNO JE POZNAVANJE BROJA SUPPORTERA
+          //*ZA SUPPORTER VIEW POTREBNO JE POZNAVANJE BROJA SUPPORTERA I CIJENE
+          const { mintedCount, priceInSol } =
+            await getSupportersCountAndPrice();
+          setSupportersCount(mintedCount);
+          //*AKO JE RIJEC O CREATORU ONDA PRIKAZI STRANICU KAO ZA SUPPORTERA
+          if (sessionData.isCreator) setHasSupportedCreator(true);
           //TODO -> PROVJERA KOJEM CREATORU PRIPADA BLOG POST I JE LI USER SUPPORTA TOG CREATORA -> AKO NE ONDA NE PRIKAZUJ BLOG
           //setCreatorData(true);
+          let hasSupportedCreator = false;
+          if (!hasSupportedCreator) {
+            setSupportSolPrice(priceInSol);
+          }
           setCreatorDataLoading(false);
-          setHasSupportedCreator(true);
+          setHasSupportedCreator(false);
         } catch (err) {
           console.log("Error checking post credentials", err);
         }
@@ -60,7 +74,24 @@ const AboutCreator = ({ creatorId }) => {
 
       fetchData();
     }
-  }, [status, sessionData]);
+  }, [status, sessionData, useEffectCalled]);
+
+  const getSupportersCountAndPrice = async () => {
+    const response = await fetch("/api/getCollectionNFTPrice", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create collection");
+    }
+    const parsedResponse = await response.json();
+    return parsedResponse;
+  };
 
   const handleSupportButtonClick = async () => {
     console.log("handleSupportButtonClick", alertRef);
@@ -68,6 +99,7 @@ const AboutCreator = ({ creatorId }) => {
       setWalletNotConnectedModalOpen(true);
     } else {
       setSupportTransactionLoading(true);
+      const { priceInSol } = await getSupportersCountAndPrice();
       const supporterPublicKey = publicKey;
       const boldMintAddress = new PublicKey(
         process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
@@ -75,7 +107,7 @@ const AboutCreator = ({ creatorId }) => {
       const creatorAddress = new PublicKey(
         "2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX"
       );
-      const totalSOLAmount = 0.5;
+      const totalSOLAmount = priceInSol;
       const boldMintAmmount =
         (totalSOLAmount *
           process.env.NEXT_PUBLIC_BOLDMINT_TRANSACTION_FEE_PERCENTAGE) /
@@ -178,7 +210,7 @@ const AboutCreator = ({ creatorId }) => {
               <div className="flex items-center mt-2 sm:mt-0">
                 <span className="text-[25px] mr-1">Supporters: </span>
                 <span className="text-[25px] mr-1 font-semibold">
-                  {creatorData.supportersCount}
+                  {supportersCount}
                 </span>
                 <SupportIcon classes="w-[30px] h-[30px] fill-font-color-dark" />
               </div>
@@ -202,7 +234,7 @@ const AboutCreator = ({ creatorId }) => {
                       <LoadingButton
                         onButtonClick={handleSupportButtonClick}
                         buttonLoading={supportTransactionLoading}
-                        buttonText="Support for 1.3 SOL"
+                        buttonText={`Support for ${supportSolPrice} SOL`}
                         buttonClasses="mt-5 text-xl relative"
                       />
                     </div>
