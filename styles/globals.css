@@ -5,6 +5,46 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  /*SCROLLBAR*/
+  /*firefox*/
+  scrollbar-width: thin;
+  scrollbar-color: #aaaaaac4 #aaaaaa30;
+}
+
+/*webkit browsers*/
+/*traka ispod scrollbara*/
+::-webkit-scrollbar-track {
+  background-color: #aaaaaa30;
+}
+/*scrollbar -> bez tog ne radi*/
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px; /*HORIZONRALNI SCROLLBAR*/
+}
+/*scrollbar*/
+::-webkit-scrollbar-thumb {
+  border-radius: 15px;
+  background-color: #aaaaaac4;
+}
+/*scroolbar on hover*/
+::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
+}
+
+/* Media query for small screens */
+@media (max-width: 500px) {
+  /* Adjusting scrollbar for small screens */
+  ::-webkit-scrollbar {
+    width: 5px; /* Width for the vertical scrollbar on small screens */
+    height: 5px; /* Height for the horizontal scrollbar on small screens */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px; /* Rounded corners for the scrollbar thumb on small screens */
+  }
+}
+
 html,
 body {
   height: 100%;
