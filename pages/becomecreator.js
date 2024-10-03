@@ -7,6 +7,7 @@ import {
   InputField,
   Label,
   FormGroup,
+  AuthorizedPage,
 } from "../components";
 import TagsInput from "../modules/tagsInput";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
@@ -98,53 +99,55 @@ const BecomeCreator = () => {
   };
 
   return (
-    <div className="max-w-[400px] rounded-[0.5rem] pt-2 pb-2 pl-4 pr-4 ml-auto mr-auto">
-      <FormGroup>
-        <Label>About you</Label>
-        <textarea
-          className="w-full p-2 focus:border-primary-color border-[1px] border-solid transition-colors rounded-md"
-          placeholder="Short text about you and your interests"
-          cols="30"
-          rows="5"
+    <AuthorizedPage>
+      <div className="max-w-[400px] rounded-[0.5rem] pt-2 pb-2 pl-4 pr-4 ml-auto mr-auto">
+        <FormGroup>
+          <Label>About you</Label>
+          <textarea
+            className="w-full p-2 focus:border-primary-color border-[1px] border-solid transition-colors rounded-md"
+            placeholder="Short text about you and your interests"
+            cols="30"
+            rows="5"
+          />
+        </FormGroup>
+        <TagsInput />
+        <FormGroup>
+          <Label>Collection name</Label>
+          <InputField placeholder="e.g. My collection" />
+        </FormGroup>
+        <FormGroup>
+          <Label>Collection symbol</Label>
+          <InputField placeholder="e.g. MCNFT" />
+        </FormGroup>
+        <FormGroup>
+          <Label>Collection image URI</Label>
+          <InputField placeholder="e.g. https://domain/public_photo.png" />
+        </FormGroup>
+        <FormGroup>
+          <Label>Wallet address</Label>
+          <InputField disable value={publicKey && publicKey.toBase58()} />
+        </FormGroup>
+        <div className="flex items-center mb-4">
+          <input type="checkbox" className="mr-2 cursor-pointer" />
+          <span>
+            I agree to the <span className="underline">terms&conditions</span>.
+          </span>
+        </div>
+        <div className="flex justify-center text-center">
+          <LoadingButton
+            onButtonClick={onSubmitButtonClick}
+            buttonLoading={submitTransactionLoading}
+            buttonText="Submit"
+            buttonClasses="mt-5 text-xl relative"
+          />
+        </div>
+        <WalletNotConnectedPopup
+          isOpen={walletNotConnectedModalOpen}
+          setIsOpen={setWalletNotConnectedModalOpen}
         />
-      </FormGroup>
-      <TagsInput />
-      <FormGroup>
-        <Label>Collection name</Label>
-        <InputField placeholder="e.g. My collection" />
-      </FormGroup>
-      <FormGroup>
-        <Label>Collection symbol</Label>
-        <InputField placeholder="e.g. MCNFT" />
-      </FormGroup>
-      <FormGroup>
-        <Label>Collection image URI</Label>
-        <InputField placeholder="e.g. https://domain/public_photo.png" />
-      </FormGroup>
-      <FormGroup>
-        <Label>Wallet address</Label>
-        <InputField disable value={publicKey && publicKey.toBase58()} />
-      </FormGroup>
-      <div className="flex items-center mb-4">
-        <input type="checkbox" className="mr-2 cursor-pointer" />
-        <span>
-          I agree to the <span className="underline">terms&conditions</span>.
-        </span>
+        <Alert ref={alertRef} delay={3000} />
       </div>
-      <div className="flex justify-center text-center">
-        <LoadingButton
-          onButtonClick={onSubmitButtonClick}
-          buttonLoading={submitTransactionLoading}
-          buttonText="Submit"
-          buttonClasses="mt-5 text-xl relative"
-        />
-      </div>
-      <WalletNotConnectedPopup
-        isOpen={walletNotConnectedModalOpen}
-        setIsOpen={setWalletNotConnectedModalOpen}
-      />
-      <Alert ref={alertRef} delay={3000} />
-    </div>
+    </AuthorizedPage>
   );
 };
 

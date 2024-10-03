@@ -18,6 +18,7 @@ import Alert from "./Alert";
 import WalletNotConnectedPopup from "./walletNotConnectedPopup";
 import LoadingButton from "./loadingButton";
 import MarkdownViewer from "./markdownViewer";
+import AuthorizedPage from "./authorizedPage";
 
 export {
   Button,
@@ -40,4 +41,5 @@ export {
   WalletNotConnectedPopup,
   LoadingButton,
   MarkdownViewer,
+  AuthorizedPage,
 };

@@ -3,7 +3,7 @@ import SupportIcon from "../../assets/supportIcon";
 import ProfitIcon from "../../assets/profitIcon";
 import { Button, SelectInput, Widget, PostCard } from "../../components";
 
-const CreatorHomePage = ({ mdxParsedContent }) => {
+const CreatorHomePage = () => {
   return (
     <>
       <section>

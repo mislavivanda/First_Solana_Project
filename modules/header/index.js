@@ -15,7 +15,6 @@ const Header = () => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-  console.log("Session data", session);
 
   return (
     <header className="flex-shrink-0 border-b-2 border-primary-color w-full px-6 sm:px-12 py-2 flex items-center justify-between sm:justify-start bg-white z-40">

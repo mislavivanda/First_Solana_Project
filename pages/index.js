@@ -1,16 +1,18 @@
 import UnauthorizedHomePage from "../modules/unauthorizedHomePage";
 import UserHomePage from "../modules/userHomePage";
 import CreatorHomePage from "../modules/creatorHomePage";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { AuthorizedPage } from "../components";
 
-const HomePage = ({ mdxParsedContent }) => {
-  const { data: session } = useSession();
-  if (!session) {
-    return <UnauthorizedHomePage />;
-  } else if (!session.isCreator) {
-    return <CreatorHomePage mdxParsedContent={mdxParsedContent} />;
-  } else return <UserHomePage />;
+const HomePage = () => {
+  return (
+    <AuthorizedPage
+      unauthorizedFallbackComponent={<UnauthorizedHomePage />}
+      //*REACT EVALUATEA PROPOVE PRIJE NEGO IH POSALJE PARENTU -> NE MOZE KORISTIT DIREKTNO KAO children OD AuthorizedPage JER sessionData NE POSTOJI PRILIKOM PROSLIJEDIVANJA U AuthorizedPage KOMPONENTU
+      renderChildrenMethod={(sessionData) =>
+        sessionData.isCreator ? <CreatorHomePage /> : <UserHomePage />
+      }
+    ></AuthorizedPage>
+  );
 };
 
 export default HomePage;
