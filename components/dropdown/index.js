@@ -39,29 +39,6 @@ const Dropdown = () => {
             className="flex items-center hover:cursor-pointer py-2 px-6 hover:bg-hover-select transition-all duration-200 ease-in-out"
             onClick={() => {
               setIsOpened(false);
-              router.push("/account");
-            }}
-          >
-            <svg
-              className="mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#642dfd"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ width: "1.5rem", height: "1.5rem" }}
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span className="text-primary-color">Account</span>
-          </li>
-          <li
-            className="flex items-center hover:cursor-pointer py-2 px-6 hover:bg-hover-select transition-all duration-200 ease-in-out"
-            onClick={() => {
-              setIsOpened(false);
               signOut({ callbackUrl: "/login" });
             }}
           >
