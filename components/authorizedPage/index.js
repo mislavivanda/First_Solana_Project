@@ -6,9 +6,8 @@ const AuthorizedPage = ({
   unauthorizedFallbackComponent,
   renderChildrenMethod,
 }) => {
-  console.log("AuthorizedPage");
   const { data: sessionData, status } = useSession();
-  console.log(sessionData, status);
+  console.log("Session data", sessionData);
   if (status === "loading")
     return (
       <div className="w-full h-full flex-grow flex items-center justify-center">
@@ -17,8 +16,6 @@ const AuthorizedPage = ({
     );
 
   if (status === "authenticated") {
-    console.log("Return children");
-    console.log("Session data 2", sessionData);
     if (roleCheckMethod) {
       if (roleCheckMethod(sessionData)) {
         return (

@@ -1,6 +1,8 @@
 import SupportIcon from "../../assets/supportIcon";
 import { Button } from "../../components";
+import { useRouter } from "next/router";
 const UnauthorizedHomePage = () => {
+  const router = useRouter();
   return (
     <>
       <section>
@@ -44,7 +46,11 @@ const UnauthorizedHomePage = () => {
               Turn your ideas into exclusive NFTs on the Solana blockchain.
               Anyone can become a creator by filling out a simple form!
             </p>
-            <Button classes="mt-2 !text-xl" type="filled">
+            <Button
+              classes="mt-2 !text-xl"
+              type="filled"
+              onClick={() => router.push("/register")}
+            >
               Become Creator
             </Button>
           </div>
@@ -55,7 +61,11 @@ const UnauthorizedHomePage = () => {
               Discover and support your favorite creators by purchasing their
               NFTs for access to their content.
             </p>
-            <Button classes="mt-2 !text-xl" type="filled">
+            <Button
+              classes="mt-2 !text-xl"
+              type="filled"
+              onClick={() => router.push("/register")}
+            >
               Explore Content
             </Button>
           </div>
@@ -217,7 +227,11 @@ m231 -130 c32 -11 76 -32 96 -45 20 -14 132 -120 249 -237 228 -230 256 -269
         </div>
       </section>
       <section className="flex justify-center mt-10">
-        <Button type="filled" classes="!text-2xl">
+        <Button
+          type="filled"
+          classes="!text-2xl"
+          onClick={() => router.push("/register")}
+        >
           Get started
         </Button>
       </section>

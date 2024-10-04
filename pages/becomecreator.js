@@ -11,8 +11,12 @@ import {
 } from "../components";
 import TagsInput from "../modules/tagsInput";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const BecomeCreator = () => {
+  const { data: sessionData } = useSession();
+  const router = useRouter();
   const alertRef = useRef(null);
   const [submitTransactionLoading, setSubmitTransactionLoading] =
     useState(false);
@@ -90,6 +94,9 @@ const BecomeCreator = () => {
         const { collectionAddress } = await response.json();
         console.log("Collection created: ", collectionAddress);
         setSubmitTransactionLoading(false);
+        setTimeout(() =>
+          router.push(`creators/${sessionData.userData.userId}`)
+        );
       } catch (error) {
         console.log("Error", error);
         alertRef.current.showAlert("Submission failed", "error");
@@ -99,7 +106,9 @@ const BecomeCreator = () => {
   };
 
   return (
-    <AuthorizedPage>
+    <AuthorizedPage
+      roleCheckMethod={(sessionData) => !sessionData.userData.isCreator}
+    >
       <div className="max-w-[400px] rounded-[0.5rem] pt-2 pb-2 pl-4 pr-4 ml-auto mr-auto">
         <FormGroup>
           <Label>About you</Label>
@@ -138,7 +147,7 @@ const BecomeCreator = () => {
             onButtonClick={onSubmitButtonClick}
             buttonLoading={submitTransactionLoading}
             buttonText="Submit"
-            buttonClasses="mt-5 text-xl relative"
+            buttonClasses="mt-5 text-xl"
           />
         </div>
         <WalletNotConnectedPopup

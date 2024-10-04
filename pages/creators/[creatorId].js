@@ -58,7 +58,7 @@ const AboutCreator = ({ creatorId }) => {
             await getSupportersCountAndPrice();
           setSupportersCount(mintedCount);
           //*AKO JE RIJEC O CREATORU ONDA PRIKAZI STRANICU KAO ZA SUPPORTERA
-          if (sessionData.isCreator) setHasSupportedCreator(true);
+          if (sessionData.userData.isCreator) setHasSupportedCreator(true);
           //TODO -> PROVJERA KOJEM CREATORU PRIPADA BLOG POST I JE LI USER SUPPORTA TOG CREATORA -> AKO NE ONDA NE PRIKAZUJ BLOG
           //setCreatorData(true);
           let hasSupportedCreator = false;
@@ -77,20 +77,25 @@ const AboutCreator = ({ creatorId }) => {
   }, [status, sessionData, useEffectCalled]);
 
   const getSupportersCountAndPrice = async () => {
-    const response = await fetch("/api/getCollectionNFTPrice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
-      }),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to create collection");
+    try {
+      const response = await fetch("/api/getCollectionNFTPrice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create collection");
+      }
+      const parsedResponse = await response.json();
+      return parsedResponse;
+    } catch (error) {
+      alertRef.current.showAlert("Transaction error", "error");
+      setSupportTransactionLoading(false);
     }
-    const parsedResponse = await response.json();
-    return parsedResponse;
   };
 
   const handleSupportButtonClick = async () => {
@@ -235,7 +240,7 @@ const AboutCreator = ({ creatorId }) => {
                         onButtonClick={handleSupportButtonClick}
                         buttonLoading={supportTransactionLoading}
                         buttonText={`Support for ${supportSolPrice} SOL`}
-                        buttonClasses="mt-5 text-xl relative"
+                        buttonClasses="mt-5 text-xl"
                       />
                     </div>
                     <WalletNotConnectedPopup

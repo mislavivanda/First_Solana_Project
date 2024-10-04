@@ -2,8 +2,10 @@ import PostIcon from "../../assets/postIcon";
 import SupportIcon from "../../assets/supportIcon";
 import ProfitIcon from "../../assets/profitIcon";
 import { Button, SelectInput, Widget, PostCard } from "../../components";
+import { useRouter } from "next/router";
 
 const CreatorHomePage = () => {
+  const router = useRouter();
   return (
     <>
       <section>
@@ -50,7 +52,11 @@ const CreatorHomePage = () => {
         </div>
       </section>
       <div className="w-full mx-auto mb-2 flex items-center justify-center">
-        <Button type="filled" classes="!text-2xl">
+        <Button
+          type="filled"
+          classes="!text-2xl"
+          onClick={() => router.push("createcontent")}
+        >
           Create content
         </Button>
       </div>

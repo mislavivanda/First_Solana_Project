@@ -3,6 +3,7 @@ import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createSurname, capitalizeFirstLetter } from "../../../helpers";
+import { getUserMetadataByUserId } from "../../../lib/dataSource";
 //CATCH ALL ROUTE(FILENAME [...NAME].js)-> All requests to /api/auth/* (signIn, callback, signOut, etc.) will automatically be handled by NextAuth.js.
 const authOptions = {
   session: {
@@ -66,27 +67,28 @@ const authOptions = {
       //u slucaju prijave preko credntials providera podaci su vec dohvaceni i authorize i ne treba zvat contentful API
       if (user && account) {
         //ovisno o provider drukciji je format imena i maila kojeg vraca, zakaci to na jwt ovisno o provideru
-        if (account.provider === "github") {
-          let nameSurnameWordArray = profile.name.split(" ");
-          let surname = createSurname(nameSurnameWordArray);
-          token.user = {
-            name: nameSurnameWordArray[0],
-            surname: surname,
-            email: profile.email,
-          };
-        } else if (account.provider === "google") {
-          //ime i prezime vraća sve malim slovima
-          let nameSurnameWordArray = profile.name.split(" ");
+        if (account.provider === "github" || account.provider === "google") {
+          if (account.provider === "github") {
+            let nameSurnameWordArray = profile.name.split(" ");
+            let surname = createSurname(nameSurnameWordArray);
+            token.user = {
+              name: nameSurnameWordArray[0],
+              surname: surname,
+              email: profile.email,
+            };
+          } else if (account.provider === "google") {
+            //ime i prezime vraća sve malim slovima
+            let nameSurnameWordArray = profile.name.split(" ");
 
-          let surname = createSurname(nameSurnameWordArray, true);
+            let surname = createSurname(nameSurnameWordArray, true);
 
-          token.user = {
-            name: capitalizeFirstLetter(nameSurnameWordArray[0]),
-            surname: surname,
-            email: profile.email,
-          };
-        } //credentials autentikacija, returnani parametri kao objekt iz authorize funkcije, samo ih postavimo
-        else token.user = user;
+            token.user = {
+              name: capitalizeFirstLetter(nameSurnameWordArray[0]),
+              surname: surname,
+              email: profile.email,
+            };
+          } //credentials autentikacija, returnani parametri kao objekt iz authorize funkcije, samo ih postavimo
+        } else token.user = user;
       }
       return token;
     },
@@ -94,7 +96,12 @@ const authOptions = {
       //  "session" is current session object
       //  below we set "user" param of "session" to value received from "jwt" callback
       session.userData = token.user;
-      //session.user = user.user;
+      const userMetadata = await getUserMetadataByUserId(
+        session.userData.userId
+      );
+      //*DOHVATI NAJNOVIJE META PODATKE
+      if (userMetadata)
+        session.userData = { ...session.userData, ...userMetadata };
       return session;
     },
     async signIn({ user, account, profile, email, credentials }) {

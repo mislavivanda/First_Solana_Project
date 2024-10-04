@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { FormGroup, InputField, Label } from "../../components";
-const TagsInput = () => {
+const TagsInput = ({ tags, setTags, noLabel }) => {
   const [inputValue, setInputValue] = useState("");
-  const [tags, setTags] = useState([]);
   const maxTagLength = 15;
 
   const handleInputChange = (e) => {
@@ -28,7 +27,7 @@ const TagsInput = () => {
 
   return (
     <FormGroup>
-      <Label>Tags</Label>
+      {!noLabel && <Label>Tags</Label>}
       <div className="flex-col">
         <InputField
           type="text"

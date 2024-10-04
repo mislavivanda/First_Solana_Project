@@ -20,9 +20,6 @@ const SolanaWallet = ({ classes }) => {
     };
   }, [connection, publicKey]);
 
-  console.log("Connection", connection);
-  console.log("Public key", publicKey);
-
   const useWalletMultiConfig = {
     onSelectWallet: (walletName) =>
       console.log("onSelectWallet call", walletName),

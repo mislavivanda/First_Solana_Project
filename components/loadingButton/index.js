@@ -14,7 +14,7 @@ const LoadingButton = ({
       <Button
         onClick={() => !buttonLoading && onButtonClick()}
         type="filled"
-        classes={buttonClasses}
+        classes={`relative ${buttonClasses || ""}`}
       >
         <div className={`${buttonLoading ? "invisible" : ""}`}>
           {buttonText}
