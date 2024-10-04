@@ -1,3 +1,5 @@
+const contentfulManagement = require("contentful-management");
+
 export const createSurname = (
   nameSurnameWordsArray,
   capitalizeFirst = false
@@ -66,4 +68,13 @@ export async function fetchGraphQLContentfulData(query, variables = {}) {
     .catch((error) => {
       throw new Error(error);
     });
+}
+
+export async function createContenfulCMAConnection() {
+  const contenfulClient = contentfulManagement.createClient({
+    accessToken: process.env.CONTENTFUL_CMA_TOKEN,
+  });
+  const space = await contenfulClient.getSpace(process.env.CONTENTFUL_SPACE_ID);
+  const environment = await space.getEnvironment("master");
+  return { contenfulClient, space, environment };
 }

@@ -1,10 +1,6 @@
-const contentfulManagement = require("contentful-management");
+import { createContenfulCMAConnection } from "../../helpers";
 import { withAuthRoute } from "../../lib/authMiddleware";
 import { v4 as uuidv4 } from "uuid";
-
-const contenfulClient = contentfulManagement.createClient({
-  accessToken: process.env.CONTENTFUL_CMA_TOKEN,
-});
 
 export default withAuthRoute(async function handler(req, res) {
   if (req.method !== "POST") {
@@ -18,10 +14,7 @@ export default withAuthRoute(async function handler(req, res) {
   }
 
   try {
-    const space = await contenfulClient.getSpace(
-      process.env.CONTENTFUL_SPACE_ID
-    );
-    const environment = await space.getEnvironment("master");
+    const { environment } = createContenfulCMAConnection();
     const postSlug = uuidv4();
     const postEntry = await environment.createEntry("post", {
       fields: {
