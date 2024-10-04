@@ -15,11 +15,11 @@ export default withAuthRoute(async function handler(req, res) {
     if (
       !metadata ||
       !(
-        Object.hasOwn(collectionMetadata, "name") &&
-        Object.hasOwn(collectionMetadata, "symbol") &&
-        Object.hasOwn(collectionMetadata, "uri") &&
-        Object.hasOwn(collectionMetadata, "seller_fee_basis_points") &&
-        Object.hasOwn(collectionMetadata, "creators")
+        Object.hasOwn(metadata, "name") &&
+        Object.hasOwn(metadata, "symbol") &&
+        Object.hasOwn(metadata, "uri") &&
+        Object.hasOwn(metadata, "seller_fee_basis_points") &&
+        Object.hasOwn(metadata, "creators")
       )
     ) {
       return res.status(400).json({ error: "Missing parameters" });

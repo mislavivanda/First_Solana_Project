@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Popup from "../popup";
 
-const WalletNotConnectedPopup = ({ isOpen, setIsOpen }) => {
+const WalletNotConnectedPopup = ({ isOpen, setIsOpen, customMessage }) => {
   const [screenWidthSize, setScreenWidthSize] = useState(false);
 
   useEffect(() => {
@@ -16,6 +16,7 @@ const WalletNotConnectedPopup = ({ isOpen, setIsOpen }) => {
         <p className="mt-1">
           To continue, you need to connect your Solana wallet.
         </p>
+        {customMessage && <p className="mt-1">{customMessage}</p>}
         <p className="mt-1">
           {screenWidthSize < 640 ? (
             <span>

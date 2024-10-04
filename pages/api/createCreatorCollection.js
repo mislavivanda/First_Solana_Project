@@ -4,8 +4,10 @@ import {
   irysStorage,
 } from "@metaplex-foundation/js";
 import { Keypair, Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { createContenfulCMAConnection } from "../../helpers";
 import { withAuthRoute } from "../../lib/authMiddleware";
 import bs58 from "bs58";
+import { getUserMetadataByUserId } from "../../lib/dataSource";
 
 export default withAuthRoute(async function handler(req, res) {
   if (req.method !== "POST") {
@@ -26,7 +28,7 @@ export default withAuthRoute(async function handler(req, res) {
         irysStorage() //*decentralized storage network
       );
 
-    const { collectionMetadata } = req.body;
+    const { collectionMetadata, aboutText, creatorTags, creatorId } = req.body;
     //!OSIGURANJE OD NAPADA:
     //*1) PROVJERI I VRIJEDNOSTI seller_fee_basis_points(STAVIT U ENV) I creators PARAMETARA TAKO DA AUTENTICIRANI USER NE MOZE STAVLJAT STA ZELI(NPR U POSTMAN)
     //*2) PROTECTION OD POZIVANJA API-A KOJI BI MINTA DOK NE ISPRAZNI NAS WALLET -> RATE LIMITER ILI OGRANICIT DA USER MOZE IMAT MAX 1 ILI ODREDEN BROJ KOLEKCIJA PO WALLETU
@@ -43,7 +45,7 @@ export default withAuthRoute(async function handler(req, res) {
       return res.status(400).json({ error: "Missing parameters" });
     }
 
-    const { nft } = await metaplex.nfts().create({
+    const { nft, response } = await metaplex.nfts().create({
       uri: collectionMetadata.uri,
       name: collectionMetadata.name,
       symbol: collectionMetadata.symbol,
@@ -57,6 +59,60 @@ export default withAuthRoute(async function handler(req, res) {
       updateAuthority: boldMintAuthority, //*BoldMint JE AUTHORITY -> JEDINI MOZE UPDATEAT(AKO ZATREBA)
       collectionAuthority: boldMintAuthority, //*BoldMint JE AUTHORITY
     });
+    const { environment } = await createContenfulCMAConnection();
+    //*KREIRAJ TRANSAKCIJU OD NFT
+    const collectionNFTTransaction = await environment.createEntry(
+      "transaction",
+      {
+        fields: {
+          transactionId: {
+            "en-US": response.signature,
+          },
+          creatorReceivedAmmount: {
+            "en-US": 0,
+          },
+        },
+      }
+    );
+    const transactionEntry = await collectionNFTTransaction.publish();
+    //*KREIRAJ NFT OBJEKT
+    const collectionNFT = await environment.createEntry("nft", {
+      fields: {
+        address: {
+          "en-US": creatorId,
+        },
+        transaction: {
+          "en-US": {
+            sys: {
+              id: transactionEntry.sys.id,
+              type: "Link",
+              linkType: "Entry",
+            },
+          },
+        },
+        isCollection: {
+          "en-US": true,
+        },
+      },
+    });
+    const nftEntry = await collectionNFT.publish();
+    //*AZURIRAJ POTREBNE USER FIELDOVE -> POTREBNO DOHVATIT SVE FIELDSOVE
+    const creatorMetadata = await getUserMetadataByUserId(creatorId);
+    const creatorEntry = await environment.getEntry(creatorMetadata.entryId);
+    creatorEntry.fields["isCreator"] = { "en-US": true };
+    creatorEntry.fields["creatorAbout"] = { "en-US": aboutText };
+    creatorEntry.fields["creatorTags"] = { "en-US": creatorTags };
+    creatorEntry.fields["collectionNft"] = {
+      "en-US": {
+        sys: {
+          type: "Link",
+          linkType: "Entry",
+          id: nftEntry.sys.id,
+        },
+      },
+    };
+    const updatedCreatorEntity = await creatorEntry.update();
+    await updatedCreatorEntity.publish();
     res.status(200).json({
       collectionAddress: nft.address.toBase58(),
     });
