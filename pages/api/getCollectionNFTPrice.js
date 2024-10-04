@@ -9,7 +9,7 @@ const calculateNFTPrice = (mintedCount) => {
 };
 
 const getMintedNFTCount = async (collectionAddress) => {
-  const connection = new Connection(clusterApiUrl("devnet"));
+  const connection = new Connection(process.env.HELIUS_RPC_URL, "confirmed");
 
   //*NIJE POTREBNO SPECIFIKACIJA WALLETA ZA DOHVAT PODATAKA
   const metaplex = Metaplex.make(connection);

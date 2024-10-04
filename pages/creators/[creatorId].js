@@ -78,20 +78,21 @@ const AboutCreator = ({ creatorId }) => {
 
   const getSupportersCountAndPrice = async () => {
     try {
-      const response = await fetch("/api/getCollectionNFTPrice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
-        }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create collection");
-      }
-      const parsedResponse = await response.json();
-      return parsedResponse;
+      // const response = await fetch("/api/getCollectionNFTPrice", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
+      //   }),
+      // });
+      // if (!response.ok) {
+      //   throw new Error("Failed to create collection");
+      // }
+      // const parsedResponse = await response.json();
+      // return parsedResponse;
+      return { mintedCount: 0, priceInSol: 0.01 };
     } catch (error) {
       alertRef.current.showAlert("Transaction error", "error");
       setSupportTransactionLoading(false);
@@ -124,12 +125,12 @@ const AboutCreator = ({ creatorId }) => {
       const transfer1 = SystemProgram.transfer({
         fromPubkey: supporterPublicKey,
         toPubkey: boldMintAddress,
-        lamports: boldMintAmmount * LAMPORTS_PER_SOL,
+        lamports: Math.round(boldMintAmmount * LAMPORTS_PER_SOL),
       });
       const transfer2 = SystemProgram.transfer({
         fromPubkey: supporterPublicKey,
         toPubkey: creatorAddress,
-        lamports: creatorAmmount * LAMPORTS_PER_SOL,
+        lamports: Math.round(creatorAmmount * LAMPORTS_PER_SOL),
       });
       const transaction = new Transaction().add(transfer1, transfer2);
       try {
@@ -143,6 +144,9 @@ const AboutCreator = ({ creatorId }) => {
           body: JSON.stringify({
             collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
             supporterAddress: supporterPublicKey,
+            transferedFundsTransactionSignature: signature,
+            creatorAmmount,
+            supporterId: sessionData.userData.userId,
           }),
         });
         if (!response.ok) {

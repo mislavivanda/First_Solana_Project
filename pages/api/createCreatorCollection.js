@@ -3,7 +3,7 @@ import {
   keypairIdentity,
   irysStorage,
 } from "@metaplex-foundation/js";
-import { Keypair, Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { Keypair, Connection, PublicKey } from "@solana/web3.js";
 import { createContenfulCMAConnection } from "../../helpers";
 import { withAuthRoute } from "../../lib/authMiddleware";
 import bs58 from "bs58";
@@ -15,7 +15,7 @@ export default withAuthRoute(async function handler(req, res) {
   }
 
   try {
-    const connection = new Connection(clusterApiUrl("devnet"));
+    const connection = new Connection(process.env.HELIUS_RPC_URL, "confirmed");
 
     //!KREIRANJE MOZE ODRADITI SAMO AUTHORITY KOLEKCIJE -> BoldMint
     const boldMintAuthority = Keypair.fromSecretKey(
@@ -59,6 +59,7 @@ export default withAuthRoute(async function handler(req, res) {
       updateAuthority: boldMintAuthority, //*BoldMint JE AUTHORITY -> JEDINI MOZE UPDATEAT(AKO ZATREBA)
       collectionAuthority: boldMintAuthority, //*BoldMint JE AUTHORITY
     });
+    const mintedCollectionNFTAddress = nft.address.toBase58();
     const { environment } = await createContenfulCMAConnection();
     //*KREIRAJ TRANSAKCIJU OD NFT
     const collectionNFTTransaction = await environment.createEntry(
@@ -79,7 +80,7 @@ export default withAuthRoute(async function handler(req, res) {
     const collectionNFT = await environment.createEntry("nft", {
       fields: {
         address: {
-          "en-US": creatorId,
+          "en-US": mintedCollectionNFTAddress,
         },
         transaction: {
           "en-US": {
@@ -102,19 +103,13 @@ export default withAuthRoute(async function handler(req, res) {
     creatorEntry.fields["isCreator"] = { "en-US": true };
     creatorEntry.fields["creatorAbout"] = { "en-US": aboutText };
     creatorEntry.fields["creatorTags"] = { "en-US": creatorTags };
-    creatorEntry.fields["collectionNft"] = {
-      "en-US": {
-        sys: {
-          type: "Link",
-          linkType: "Entry",
-          id: nftEntry.sys.id,
-        },
-      },
+    creatorEntry.fields["collectionNftAddress"] = {
+      "en-US": mintedCollectionNFTAddress,
     };
     const updatedCreatorEntity = await creatorEntry.update();
     await updatedCreatorEntity.publish();
     res.status(200).json({
-      collectionAddress: nft.address.toBase58(),
+      collectionAddress: mintedCollectionNFTAddress,
     });
   } catch (error) {
     console.error("Error creating NFT:", error);
