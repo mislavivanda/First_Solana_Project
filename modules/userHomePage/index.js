@@ -39,7 +39,12 @@ const UserHomePage = () => {
   return (
     <>
       <section>
-        <h1 className="inline text-3xl font-extrabold  mx-5 sm:mx-10 w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
+        <h1 className="text-5xl font-extrabold">
+          Welcome back{" "}
+          <span className="text-primary-color">{`${userHomePageData.name} ${userHomePageData.surname}`}</span>
+        </h1>
+        <br />
+        <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
           Your creators
         </h1>
         <div className="mt-6 mb-2 grid gap-2 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
@@ -52,8 +57,8 @@ const UserHomePage = () => {
           )}
         </div>
       </section>
-      <section>
-        <h1 className="inline text-3xl font-extrabold  mx-5 sm:mx-10 w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
+      <section className="mt-4">
+        <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
           Popular creators
         </h1>
         <div className="mt-6 mb-2 grid gap-2 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">

@@ -50,7 +50,12 @@ const CreatorHomePage = () => {
   return (
     <>
       <section>
-        <h1 className="inline text-3xl font-extrabold  mx-5 sm:mx-10 w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
+        <h1 className="text-5xl font-extrabold">
+          Welcome back{" "}
+          <span className="text-primary-color">{`${creatorHomePageData.name} ${creatorHomePageData.surname}`}</span>
+        </h1>
+        <br />
+        <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
           Analytics
         </h1>
         <div className="mt-8 text-3xl font-extrabold text-font-color">
@@ -88,7 +93,7 @@ const CreatorHomePage = () => {
         </div>
       </section>
       <section>
-        <h1 className="inline text-3xl font-extrabold  mx-5 sm:mx-10 w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
+        <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
           Posts
         </h1>
         <div className="mt-6 mb-6 grid gap-2 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
