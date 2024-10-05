@@ -1,6 +1,4 @@
-import { Metaplex } from "@metaplex-foundation/js";
-import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
-
+import { getCollectionNFTCreatorData } from "../../lib/dataSource";
 const calculateNFTPrice = (mintedCount) => {
   const a = 0.0008;
   const b = 0.01;
@@ -9,29 +7,11 @@ const calculateNFTPrice = (mintedCount) => {
 };
 
 const getMintedNFTCount = async (collectionAddress) => {
-  const connection = new Connection(process.env.HELIUS_RPC_URL, "confirmed");
-
-  //*NIJE POTREBNO SPECIFIKACIJA WALLETA ZA DOHVAT PODATAKA
-  const metaplex = Metaplex.make(connection);
-
   try {
-    //*DOHVAT SVIH BOLD MINT NFT-OVA
-    console.log("API CALL 1");
-    const updateAuthorityNFTS = await metaplex.nfts().findAllByUpdateAuthority({
-      updateAuthority: new PublicKey(process.env.BOLDMINT_PUBLIC_KEY),
-    });
-    console.log("API CALL 2");
-
-    //*FILTER PO COLLECTION PROPERTY
-    const collectionPublicKey = new PublicKey(collectionAddress);
-    const nftsInCollection = updateAuthorityNFTS.filter((nft) => {
-      return (
-        nft.collection && nft.collection.address.equals(collectionPublicKey)
-      );
-    });
-    console.log(nftsInCollection[0].address.toBase58());
-    console.log(nftsInCollection[1].address.toBase58());
-    return nftsInCollection.length;
+    const collectionCreatorData = await getCollectionNFTCreatorData(
+      collectionAddress
+    );
+    return collectionCreatorData.receivedTransactionIds.length;
   } catch (error) {
     console.error("Error fetching Candy Machine data:", error);
     return null;

@@ -1,7 +1,8 @@
 import { parseBlogDate } from "../../helpers";
 import MarkdownViewer from "../markdownViewer/index.js";
 
-const PostCard = ({ blogData }) => {
+const PostCard = ({ postData }) => {
+  console.log("Post data", postData);
   return (
     <article className="flex flex-col h-[300px] bg-white rounded-lg p-2 shadow-md overflow-hidden line-clamp-3 text-ellipsis">
       <div className="text-primary-color capitalize text-xl font-semibold border-b-2 border-solid border-primary-color pb-2">

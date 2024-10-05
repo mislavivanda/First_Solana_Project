@@ -4,6 +4,7 @@ import {
   MarkdownViewer,
   Spinner,
 } from "../../components/index.js";
+import { getPostData, getUserMetadataByUserId } from "../../lib/dataSource.js";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -12,26 +13,13 @@ import { parseBlogDate, capitalizeFirstLetter } from "../../helpers/index.js";
 const PostPage = () => {
   const router = useRouter();
   const { slug } = router.query; // Get the slug from the query
-  const { data: session, status } = useSession();
+  const { data: sessionData, status } = useSession();
   const [postDataLoading, setPostDataLoading] = useState(true);
   const [postData, setPostData] = useState(null);
   useEffect(() => {
     if (status === "authenticated") {
       const fetchData = async () => {
         try {
-          //TODO -> PROVJERA KOJEM CREATORU PRIPADA BLOG POST I JE LI USER SUPPORTA TOG CREATORA -> AKO NE ONDA NE PRIKAZUJ BLOG
-          const postCreatorResponse = await fetch("/api/getPostData", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              postSlug: slug,
-              getCreatorId: true,
-            }),
-          });
-          const { creatorId: postCreatorId } = await postCreatorResponse.json();
-          console.log("Post creator ID", postCreatorId);
           const postDataResponse = await fetch("/api/getPostData", {
             method: "POST",
             headers: {
@@ -39,8 +27,12 @@ const PostPage = () => {
             },
             body: JSON.stringify({
               postSlug: slug,
+              userId: sessionData.userData.userId,
             }),
           });
+          if (!postDataResponse.ok) {
+            throw new Error("Failed to get post data");
+          }
           const postData = await postDataResponse.json();
           console.log(postData);
           setPostData(postData);
@@ -52,7 +44,7 @@ const PostPage = () => {
 
       fetchData();
     }
-  }, [status, session]);
+  }, [status, sessionData]);
 
   return (
     <AuthorizedPage>

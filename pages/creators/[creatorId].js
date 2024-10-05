@@ -11,6 +11,7 @@ import {
 } from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
   PublicKey,
@@ -19,7 +20,9 @@ import {
   LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
 
-const AboutCreator = ({ creatorId }) => {
+const AboutCreator = () => {
+  const router = useRouter();
+  const { creatorId } = router.query; // Get the slug from the query
   const [walletNotConnectedModalOpen, setWalletNotConnectedModalOpen] =
     useState(false);
   const [supportTransactionLoading, setSupportTransactionLoading] =
@@ -27,16 +30,7 @@ const AboutCreator = ({ creatorId }) => {
   const [hasSupportedCreator, setHasSupportedCreator] = useState(false);
   const [creatorDataLoading, setCreatorDataLoading] = useState(true);
   const [supportSolPrice, setSupportSolPrice] = useState(null);
-  const [supportersCount, setSupportersCount] = useState(0);
-  const [creatorData, setCreatorData] = useState({
-    name: "John",
-    surname: "Doe",
-    supporters: 10,
-    tags: ["Finance", "Investments", "Stock", "Wall Street"],
-    about:
-      "Hi, I'm John Doe, currently working as a hedge fund manager and in my free time like to write various analysis about market conditions and predictions. Hope you'll enjoy them",
-    supportersCount: 16,
-  });
+  const [creatorData, setCreatorData] = useState(null);
 
   const alertRef = useRef(null);
 
@@ -52,21 +46,30 @@ const AboutCreator = ({ creatorId }) => {
       //*U SUPROTNOME POZOVI API KOJI PROVJERAVA JE LI USER SUPPORTAO CREATORA
       const fetchData = async () => {
         try {
-          //*ZA CREATOR VIEW POTREBNO JE POZNAVANJE BROJA SUPPORTERA
-          //*ZA SUPPORTER VIEW POTREBNO JE POZNAVANJE BROJA SUPPORTERA I CIJENE
-          const { mintedCount, priceInSol } =
-            await getSupportersCountAndPrice();
-          setSupportersCount(mintedCount);
-          //*AKO JE RIJEC O CREATORU ONDA PRIKAZI STRANICU KAO ZA SUPPORTERA
-          if (sessionData.userData.isCreator) setHasSupportedCreator(true);
-          //TODO -> PROVJERA KOJEM CREATORU PRIPADA BLOG POST I JE LI USER SUPPORTA TOG CREATORA -> AKO NE ONDA NE PRIKAZUJ BLOG
-          //setCreatorData(true);
-          let hasSupportedCreator = false;
-          if (!hasSupportedCreator) {
+          const response = await fetch("/api/getCreatorData", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              creatorId: creatorId,
+              userId: sessionData.userData.userId,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error("Failed to create collection");
+          }
+          const creatorData = await response.json();
+          console.log("creator data", creatorData);
+          const hasSupportedCreator = creatorData && creatorData.postsData;
+          if (creatorData && !hasSupportedCreator) {
+            //*IZRACUN SUPPORT CIJENE
+            const { priceInSol } = await getSupportersPrice();
             setSupportSolPrice(priceInSol);
           }
+          setCreatorData(creatorData);
+          setHasSupportedCreator(hasSupportedCreator);
           setCreatorDataLoading(false);
-          setHasSupportedCreator(false);
         } catch (err) {
           console.log("Error checking post credentials", err);
         }
@@ -76,103 +79,108 @@ const AboutCreator = ({ creatorId }) => {
     }
   }, [status, sessionData, useEffectCalled]);
 
-  const getSupportersCountAndPrice = async () => {
+  const getSupportersPrice = async () => {
     try {
-      // const response = await fetch("/api/getCollectionNFTPrice", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
-      //   }),
-      // });
-      // if (!response.ok) {
-      //   throw new Error("Failed to create collection");
-      // }
-      // const parsedResponse = await response.json();
-      // return parsedResponse;
-      return { mintedCount: 0, priceInSol: 0.01 };
+      const response = await fetch("/api/getCollectionNFTPrice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          collectionAddress: creatorData.collectionAddress,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create collection");
+      }
+      const parsedResponse = await response.json();
+      return parsedResponse;
     } catch (error) {
       alertRef.current.showAlert("Transaction error", "error");
       setSupportTransactionLoading(false);
     }
   };
 
-  const handleSupportButtonClick = async () => {
+  const handleSupportButtonClick = async (invokePriceInSol) => {
     console.log("handleSupportButtonClick", alertRef);
     if (!publicKey) {
       setWalletNotConnectedModalOpen(true);
     } else {
       setSupportTransactionLoading(true);
-      const { priceInSol } = await getSupportersCountAndPrice();
-      const supporterPublicKey = publicKey;
-      const boldMintAddress = new PublicKey(
-        process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
-      );
-      const creatorAddress = new PublicKey(
-        "2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX"
-      );
-      const totalSOLAmount = priceInSol;
-      const boldMintAmmount =
-        (totalSOLAmount *
-          process.env.NEXT_PUBLIC_BOLDMINT_TRANSACTION_FEE_PERCENTAGE) /
-        100;
-      const creatorAmmount = totalSOLAmount - boldMintAmmount;
-      console.log("BoldMint ammount", boldMintAmmount);
-      console.log("Creator ammount", creatorAmmount);
-      //*1 TRANSAKCIJA S 2 TRANSFERA U POZADINI -> USER CE TREBAT POTPISAT SAMO 1 TRANSAKCIJU NA totalAmmount IZNOS
-      const transfer1 = SystemProgram.transfer({
-        fromPubkey: supporterPublicKey,
-        toPubkey: boldMintAddress,
-        lamports: Math.round(boldMintAmmount * LAMPORTS_PER_SOL),
-      });
-      const transfer2 = SystemProgram.transfer({
-        fromPubkey: supporterPublicKey,
-        toPubkey: creatorAddress,
-        lamports: Math.round(creatorAmmount * LAMPORTS_PER_SOL),
-      });
-      const transaction = new Transaction().add(transfer1, transfer2);
-      try {
-        const signature = await sendTransaction(transaction, connection);
-        console.log("Transaction successful with signature: ", signature);
-        const response = await fetch("/api/mintCollectionNFT", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
-            supporterAddress: supporterPublicKey,
-            transferedFundsTransactionSignature: signature,
-            creatorAmmount,
-            supporterId: sessionData.userData.userId,
-          }),
+      //*PROVJERA JE LI SE CIJENA PROMIJENILA
+      const { priceInSol } = await getSupportersPrice();
+      if (priceInSol === invokePriceInSol) {
+        const supporterPublicKey = publicKey;
+        const boldMintAddress = new PublicKey(
+          process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
+        );
+        const creatorAddress = new PublicKey(
+          "2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX"
+        );
+        const totalSOLAmount = priceInSol;
+        const boldMintAmmount =
+          (totalSOLAmount *
+            process.env.NEXT_PUBLIC_BOLDMINT_TRANSACTION_FEE_PERCENTAGE) /
+          100;
+        const creatorAmmount = totalSOLAmount - boldMintAmmount;
+        console.log("BoldMint ammount", boldMintAmmount);
+        console.log("Creator ammount", creatorAmmount);
+        //*1 TRANSAKCIJA S 2 TRANSFERA U POZADINI -> USER CE TREBAT POTPISAT SAMO 1 TRANSAKCIJU NA totalAmmount IZNOS
+        const transfer1 = SystemProgram.transfer({
+          fromPubkey: supporterPublicKey,
+          toPubkey: boldMintAddress,
+          lamports: Math.round(boldMintAmmount * LAMPORTS_PER_SOL),
         });
-        if (!response.ok) {
-          throw new Error("Failed to create collection");
+        const transfer2 = SystemProgram.transfer({
+          fromPubkey: supporterPublicKey,
+          toPubkey: creatorAddress,
+          lamports: Math.round(creatorAmmount * LAMPORTS_PER_SOL),
+        });
+        const transaction = new Transaction().add(transfer1, transfer2);
+        try {
+          const signature = await sendTransaction(transaction, connection);
+          console.log("Transaction successful with signature: ", signature);
+          const response = await fetch("/api/mintCollectionNFT", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
+              supporterAddress: supporterPublicKey,
+              transferedFundsTransactionSignature: signature,
+              creatorAmmount,
+              supporterId: sessionData.userData.userId,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error("Failed to create collection");
+          }
+          const { mintedNftAddress } = await response.json();
+          console.log("NFT minted: ", mintedNftAddress);
+          //TODO -> PONOVNO LOADAJ CREATOR DATA KAO U COMPONENT DID MOUNT
+          setSupportTransactionLoading(false);
+          alertRef.current.showAlert("Transaction success", "success");
+          const supporterBalance = await connection.getBalance(
+            supporterPublicKey
+          );
+          console.log(
+            `Supporter balance: ${supporterBalance / LAMPORTS_PER_SOL}  SOL`
+          );
+          const creatorBalance = await connection.getBalance(creatorAddress);
+          console.log(
+            `Creator balance: ${creatorBalance / LAMPORTS_PER_SOL}  SOL`
+          );
+          const boldMintBalance = await connection.getBalance(boldMintAddress);
+          console.log(
+            `BoldMint balance: ${boldMintBalance / LAMPORTS_PER_SOL}  SOL`
+          );
+        } catch (error) {
+          alertRef.current.showAlert("Transaction error", "error");
+          setSupportTransactionLoading(false);
         }
-        const { mintedNftAddress } = await response.json();
-        console.log("NFT minted: ", mintedNftAddress);
-        setSupportTransactionLoading(false);
-        alertRef.current.showAlert("Transaction success", "success");
-        const supporterBalance = await connection.getBalance(
-          supporterPublicKey
-        );
-        console.log(
-          `Supporter balance: ${supporterBalance / LAMPORTS_PER_SOL}  SOL`
-        );
-        const creatorBalance = await connection.getBalance(creatorAddress);
-        console.log(
-          `Creator balance: ${creatorBalance / LAMPORTS_PER_SOL}  SOL`
-        );
-        const boldMintBalance = await connection.getBalance(boldMintAddress);
-        console.log(
-          `BoldMint balance: ${boldMintBalance / LAMPORTS_PER_SOL}  SOL`
-        );
-      } catch (error) {
-        alertRef.current.showAlert("Transaction error", "error");
-        setSupportTransactionLoading(false);
+      } else {
+        //*PROMJENA CIJENE -> OBAVIJESTI USERA POPUPOM
       }
     }
   };
@@ -219,29 +227,34 @@ const AboutCreator = ({ creatorId }) => {
               <div className="flex items-center mt-2 sm:mt-0">
                 <span className="text-[25px] mr-1">Supporters: </span>
                 <span className="text-[25px] mr-1 font-semibold">
-                  {supportersCount}
+                  {creatorData.supportersCount}
                 </span>
                 <SupportIcon classes="w-[30px] h-[30px] fill-font-color-dark" />
               </div>
               {
                 //*AKO JE CREATOR SUPPORTAN OD STRANE USERA TADA PRIKAZUJEMO NJEGOVE POSTOVE, U SUPROTNOME PRIKAZUJEMO SUPPORT DUGME
-                hasSupportedCreator ? (
+                hasSupportedCreator && creatorData.postsData ? (
                   <section className="mt-6">
                     <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
                       Posts
                     </h1>
                     <div className="mt-6 mb-6 grid grid-cols-1 gap-4 sm:gap-6">
-                      <PostCard />
-                      <PostCard />
-                      <PostCard />
-                      <PostCard />
+                      {creatorData.postsData.length > 0 ? (
+                        creatorData.postsData.forEach((postData, index) => (
+                          <PostCard key={index} postData={postData} />
+                        ))
+                      ) : (
+                        <p>No posts yet</p>
+                      )}
                     </div>
                   </section>
                 ) : (
                   <>
                     <div className="text-center">
                       <LoadingButton
-                        onButtonClick={handleSupportButtonClick}
+                        onButtonClick={() =>
+                          handleSupportButtonClick(supportSolPrice)
+                        }
                         buttonLoading={supportTransactionLoading}
                         buttonText={`Support for ${supportSolPrice} SOL`}
                         buttonClasses="mt-5 text-xl"
