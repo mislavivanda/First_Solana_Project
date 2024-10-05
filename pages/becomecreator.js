@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
 import {
-  Button,
   Alert,
-  WalletNotConnectedPopup,
   LoadingButton,
   InputField,
   Label,
@@ -10,7 +8,6 @@ import {
   AuthorizedPage,
 } from "../components";
 import TagsInput from "../modules/tagsInput";
-import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
@@ -23,15 +20,12 @@ const BecomeCreator = () => {
   const [collectionImageURI, setCollectionImageURI] = useState(
     "https://pbs.twimg.com/profile_images/1753713529738219520/vFDYLtFH_400x400.jpg"
   );
+  const [creatorWallet, setCreatorWallet] = useState("");
   const [agreeIsChecked, setAgreeIsChecked] = useState(true);
   const router = useRouter();
   const alertRef = useRef(null);
   const [submitTransactionLoading, setSubmitTransactionLoading] =
     useState(false);
-  const [walletNotConnectedModalOpen, setWalletNotConnectedModalOpen] =
-    useState(false);
-
-  const { publicKey } = useWallet();
 
   const uploadMetadata = async () => {
     try {
@@ -42,7 +36,7 @@ const BecomeCreator = () => {
         seller_fee_basis_points: 500, //*5% SELLER FEE
         creators: [
           {
-            address: publicKey.toBase58(),
+            address: creatorWallet,
             share: 50,
           },
           {
@@ -80,53 +74,50 @@ const BecomeCreator = () => {
       );
       return;
     }
-    if (!(aboutText && collectionName && collectionSymbol)) {
+    if (!(aboutText && collectionName && collectionSymbol && creatorWallet)) {
       alertRef.current.showAlert("Missing required parameters.", "error");
       return;
     }
-    if (!publicKey) {
-      setWalletNotConnectedModalOpen(true);
-    } else {
-      setSubmitTransactionLoading(true);
-      try {
-        //*UPLOAD METADATA
-        const { metadata: collectionMetadata, ipfsUrl: metadataURI } =
-          await uploadMetadata();
-        console.log("Uploaded metadata URI", metadataURI);
-        console.log("collectionMetadata", collectionMetadata);
-        //*CREATE COLLECTION
-        //*on a technical level, the blockchain is minting an NFT to represent that collection. However, this NFT is special because it is designated as a collection and can have other NFTs tied to it
-        //*Even though we are not minting individual NFTs as part of the collection yet, the collection itself is technically an NFT with its own metadata. This NFT will act as the "collection parent" for the other NFTs that will be minted later under it.
-        const createCollectionNFTResponse = await fetch(
-          "/api/createCreatorCollection",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              collectionMetadata,
-              aboutText,
-              creatorTags,
-              creatorId: sessionData.userData.userId,
-            }),
-          }
-        );
-        if (!createCollectionNFTResponse.ok) {
-          throw new Error("Failed to create collection");
+    setSubmitTransactionLoading(true);
+    try {
+      //*UPLOAD METADATA
+      const { metadata: collectionMetadata, ipfsUrl: metadataURI } =
+        await uploadMetadata();
+      console.log("Uploaded metadata URI", metadataURI);
+      console.log("collectionMetadata", collectionMetadata);
+      //*CREATE COLLECTION
+      //*on a technical level, the blockchain is minting an NFT to represent that collection. However, this NFT is special because it is designated as a collection and can have other NFTs tied to it
+      //*Even though we are not minting individual NFTs as part of the collection yet, the collection itself is technically an NFT with its own metadata. This NFT will act as the "collection parent" for the other NFTs that will be minted later under it.
+      const createCollectionNFTResponse = await fetch(
+        "/api/createCreatorCollection",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            collectionMetadata,
+            aboutText,
+            creatorTags,
+            creatorId: sessionData.userData.userId,
+            creatorWallet,
+          }),
         }
-
-        const { collectionAddress } = await createCollectionNFTResponse.json();
-        console.log("Collection created: ", collectionAddress);
-        //*AZURIRAJ SESSION DATA(USER POSTAJE CREATOR)
-        await fetch("/api/auth/session?update");
-        router.push(`creators/${sessionData.userData.userId}`);
-        setSubmitTransactionLoading(false);
-      } catch (error) {
-        console.log("Error", error);
-        alertRef.current.showAlert("Submission failed", "error");
-        setSubmitTransactionLoading(false);
+      );
+      if (!createCollectionNFTResponse.ok) {
+        throw new Error("Failed to create collection");
       }
+
+      const { collectionAddress } = await createCollectionNFTResponse.json();
+      console.log("Collection created: ", collectionAddress);
+      //*AZURIRAJ SESSION DATA(USER POSTAJE CREATOR)
+      await fetch("/api/auth/session?update");
+      router.push(`creators/${sessionData.userData.userId}`);
+      setSubmitTransactionLoading(false);
+    } catch (error) {
+      console.log("Error", error);
+      alertRef.current.showAlert("Submission failed", "error");
+      setSubmitTransactionLoading(false);
     }
   };
 
@@ -171,6 +162,14 @@ const BecomeCreator = () => {
             onChange={(e) => setCollectionImageURI(e.target.value)}
           />
         </FormGroup>
+        <FormGroup>
+          <Label>Wallet*</Label>
+          <InputField
+            placeholder="Select the wallet on which you want to receive supporters funds"
+            value={creatorWallet}
+            onChange={(e) => setCreatorWallet(e.target.value)}
+          />
+        </FormGroup>
         <div className="flex items-center mb-4">
           <input
             type="checkbox"
@@ -191,11 +190,6 @@ const BecomeCreator = () => {
             buttonClasses="mt-5 text-xl"
           />
         </div>
-        <WalletNotConnectedPopup
-          customMessage="Select the wallet on which you want to receive supporters funds."
-          isOpen={walletNotConnectedModalOpen}
-          setIsOpen={setWalletNotConnectedModalOpen}
-        />
         <Alert ref={alertRef} delay={3000} />
       </div>
     </AuthorizedPage>

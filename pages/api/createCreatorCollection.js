@@ -28,7 +28,13 @@ export default withAuthRoute(async function handler(req, res) {
         irysStorage() //*decentralized storage network
       );
 
-    const { collectionMetadata, aboutText, creatorTags, creatorId } = req.body;
+    const {
+      collectionMetadata,
+      aboutText,
+      creatorTags,
+      creatorId,
+      creatorWallet,
+    } = req.body;
     //!OSIGURANJE OD NAPADA:
     //*1) PROVJERI I VRIJEDNOSTI seller_fee_basis_points(STAVIT U ENV) I creators PARAMETARA TAKO DA AUTENTICIRANI USER NE MOZE STAVLJAT STA ZELI(NPR U POSTMAN)
     //*2) PROTECTION OD POZIVANJA API-A KOJI BI MINTA DOK NE ISPRAZNI NAS WALLET -> RATE LIMITER ILI OGRANICIT DA USER MOZE IMAT MAX 1 ILI ODREDEN BROJ KOLEKCIJA PO WALLETU
@@ -105,6 +111,9 @@ export default withAuthRoute(async function handler(req, res) {
     creatorEntry.fields["creatorTags"] = { "en-US": creatorTags };
     creatorEntry.fields["collectionNftAddress"] = {
       "en-US": mintedCollectionNFTAddress,
+    };
+    creatorEntry.fields["creatorWalletAddress"] = {
+      "en-US": creatorWallet,
     };
     const updatedCreatorEntity = await creatorEntry.update();
     await updatedCreatorEntity.publish();

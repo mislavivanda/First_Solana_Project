@@ -41,46 +41,50 @@ const AboutCreator = () => {
   const [useEffectCalled, setUseEffectCalled] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && !useEffectCalled) {
+    if (status === "authenticated" && creatorId && !useEffectCalled) {
       setUseEffectCalled(true);
-      //*U SUPROTNOME POZOVI API KOJI PROVJERAVA JE LI USER SUPPORTAO CREATORA
       const fetchData = async () => {
-        try {
-          const response = await fetch("/api/getCreatorData", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              creatorId: creatorId,
-              userId: sessionData.userData.userId,
-            }),
-          });
-          if (!response.ok) {
-            throw new Error("Failed to create collection");
-          }
-          const creatorData = await response.json();
-          console.log("creator data", creatorData);
-          const hasSupportedCreator = creatorData && creatorData.postsData;
-          if (creatorData && !hasSupportedCreator) {
-            //*IZRACUN SUPPORT CIJENE
-            const { priceInSol } = await getSupportersPrice();
-            setSupportSolPrice(priceInSol);
-          }
-          setCreatorData(creatorData);
-          setHasSupportedCreator(hasSupportedCreator);
-          setCreatorDataLoading(false);
-        } catch (err) {
-          console.log("Error checking post credentials", err);
-        }
+        await getCreatorData();
       };
-
       fetchData();
     }
-  }, [status, sessionData, useEffectCalled]);
+  }, [status, sessionData, useEffectCalled, creatorId]);
 
-  const getSupportersPrice = async () => {
+  const getCreatorData = async () => {
     try {
+      const response = await fetch("/api/getCreatorData", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          creatorId: creatorId,
+          userId: sessionData.userData.userId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create collection");
+      }
+      const creatorData = await response.json();
+      console.log("creator data", creatorData);
+      const hasSupportedCreator = creatorData && creatorData.postsData;
+      if (creatorData && !hasSupportedCreator) {
+        //*IZRACUN SUPPORT CIJENE
+        const priceInSol = await getSupportersPrice(creatorData);
+        setSupportSolPrice(priceInSol);
+      }
+      setCreatorData(creatorData);
+      setHasSupportedCreator(hasSupportedCreator);
+      setCreatorDataLoading(false);
+    } catch (err) {
+      console.log("Error checking post credentials", err);
+    }
+  };
+
+  const getSupportersPrice = async (creatorData) => {
+    try {
+      console.log("getSupportersPrice");
+      console.log(creatorData);
       const response = await fetch("/api/getCollectionNFTPrice", {
         method: "POST",
         headers: {
@@ -90,14 +94,16 @@ const AboutCreator = () => {
           collectionAddress: creatorData.collectionAddress,
         }),
       });
+      console.log("responsee", response);
       if (!response.ok) {
         throw new Error("Failed to create collection");
       }
       const parsedResponse = await response.json();
-      return parsedResponse;
+      return parsedResponse.priceInSol;
     } catch (error) {
-      alertRef.current.showAlert("Transaction error", "error");
+      console.error("Price calculation error", error);
       setSupportTransactionLoading(false);
+      return null;
     }
   };
 
@@ -108,15 +114,13 @@ const AboutCreator = () => {
     } else {
       setSupportTransactionLoading(true);
       //*PROVJERA JE LI SE CIJENA PROMIJENILA
-      const { priceInSol } = await getSupportersPrice();
+      const priceInSol = await getSupportersPrice(creatorData);
       if (priceInSol === invokePriceInSol) {
         const supporterPublicKey = publicKey;
         const boldMintAddress = new PublicKey(
           process.env.NEXT_PUBLIC_BOLDMINT_PUBLIC_KEY
         );
-        const creatorAddress = new PublicKey(
-          "2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX"
-        );
+        const creatorAddress = new PublicKey(creatorData.creatorWalletAddress);
         const totalSOLAmount = priceInSol;
         const boldMintAmmount =
           (totalSOLAmount *
@@ -146,7 +150,7 @@ const AboutCreator = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              collectionAddress: "8xa4iPDzmwahibPShtxz9v7YoiZV1AqkPszNcvXmmkjf",
+              collectionAddress: creatorData.collectionAddress,
               supporterAddress: supporterPublicKey,
               transferedFundsTransactionSignature: signature,
               creatorAmmount,
@@ -158,23 +162,10 @@ const AboutCreator = () => {
           }
           const { mintedNftAddress } = await response.json();
           console.log("NFT minted: ", mintedNftAddress);
-          //TODO -> PONOVNO LOADAJ CREATOR DATA KAO U COMPONENT DID MOUNT
+          //*REFRESH CREATOR DATA -> AZURIRANJE BROJA SUPPORTERA I DOHVAT BLOGOVA
+          await getCreatorData();
           setSupportTransactionLoading(false);
           alertRef.current.showAlert("Transaction success", "success");
-          const supporterBalance = await connection.getBalance(
-            supporterPublicKey
-          );
-          console.log(
-            `Supporter balance: ${supporterBalance / LAMPORTS_PER_SOL}  SOL`
-          );
-          const creatorBalance = await connection.getBalance(creatorAddress);
-          console.log(
-            `Creator balance: ${creatorBalance / LAMPORTS_PER_SOL}  SOL`
-          );
-          const boldMintBalance = await connection.getBalance(boldMintAddress);
-          console.log(
-            `BoldMint balance: ${boldMintBalance / LAMPORTS_PER_SOL}  SOL`
-          );
         } catch (error) {
           alertRef.current.showAlert("Transaction error", "error");
           setSupportTransactionLoading(false);
@@ -249,22 +240,24 @@ const AboutCreator = () => {
                     </div>
                   </section>
                 ) : (
-                  <>
-                    <div className="text-center">
-                      <LoadingButton
-                        onButtonClick={() =>
-                          handleSupportButtonClick(supportSolPrice)
-                        }
-                        buttonLoading={supportTransactionLoading}
-                        buttonText={`Support for ${supportSolPrice} SOL`}
-                        buttonClasses="mt-5 text-xl"
+                  supportSolPrice && (
+                    <>
+                      <div className="text-center">
+                        <LoadingButton
+                          onButtonClick={() =>
+                            handleSupportButtonClick(supportSolPrice)
+                          }
+                          buttonLoading={supportTransactionLoading}
+                          buttonText={`Support for ${supportSolPrice} SOL`}
+                          buttonClasses="mt-5 text-xl"
+                        />
+                      </div>
+                      <WalletNotConnectedPopup
+                        isOpen={walletNotConnectedModalOpen}
+                        setIsOpen={setWalletNotConnectedModalOpen}
                       />
-                    </div>
-                    <WalletNotConnectedPopup
-                      isOpen={walletNotConnectedModalOpen}
-                      setIsOpen={setWalletNotConnectedModalOpen}
-                    />
-                  </>
+                    </>
+                  )
                 )
               }
             </div>

@@ -17,7 +17,7 @@ const PostPage = () => {
   const [postDataLoading, setPostDataLoading] = useState(true);
   const [postData, setPostData] = useState(null);
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && slug) {
       const fetchData = async () => {
         try {
           const postDataResponse = await fetch("/api/getPostData", {
@@ -44,7 +44,7 @@ const PostPage = () => {
 
       fetchData();
     }
-  }, [status, sessionData]);
+  }, [status, sessionData, slug]);
 
   return (
     <AuthorizedPage>
@@ -145,13 +145,14 @@ const PostPage = () => {
               />
             </section>
             <div className="flex items-center flex-wrap mt-10">
-              {postData.tags.map((tag) => (
-                <div key={tag} className="my-2 mr-4 rounded-md p-2">
-                  <span className="text-lg text-primary-color font-extrabold">
-                    {`#${tag}`}
-                  </span>
-                </div>
-              ))}
+              {postData.tags &&
+                postData.tags.map((tag) => (
+                  <div key={tag} className="my-2 mr-4 rounded-md p-2">
+                    <span className="text-lg text-primary-color font-extrabold">
+                      {`#${tag}`}
+                    </span>
+                  </div>
+                ))}
             </div>
           </article>
         </section>
