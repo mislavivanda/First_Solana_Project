@@ -8,6 +8,7 @@ import {
   Alert,
   LoadingButton,
   AuthorizedPage,
+  Popup,
 } from "../../components";
 import { capitalizeFirstLetter } from "../../helpers";
 import { useSession } from "next-auth/react";
@@ -31,6 +32,8 @@ const AboutCreator = () => {
   const [creatorDataLoading, setCreatorDataLoading] = useState(true);
   const [supportSolPrice, setSupportSolPrice] = useState(null);
   const [creatorData, setCreatorData] = useState(null);
+  const [supportPriceChangePopupIsOpen, setSupportPriceChangePopupIsOpen] =
+    useState(false);
 
   const alertRef = useRef(null);
 
@@ -172,6 +175,8 @@ const AboutCreator = () => {
         }
       } else {
         //*PROMJENA CIJENE -> OBAVIJESTI USERA POPUPOM
+        setSupportPriceChangePopupIsOpen(true);
+        setSupportTransactionLoading(false);
       }
     }
   };
@@ -256,6 +261,25 @@ const AboutCreator = () => {
                         isOpen={walletNotConnectedModalOpen}
                         setIsOpen={setWalletNotConnectedModalOpen}
                       />
+                      <Popup
+                        isOpen={supportPriceChangePopupIsOpen}
+                        closeModal={() =>
+                          setSupportPriceChangePopupIsOpen(false)
+                        }
+                      >
+                        <div className="min-w-[300px]">
+                          <h3 className="font-bold">Support price updated</h3>
+                          <div className="my-1 bg-primary-color w-full h-[2px]" />
+                          <p className="mt-1">
+                            The support amount for this creator has recently
+                            changed.
+                          </p>
+                          <p className="mt-1">
+                            Please review the updated SOL price below before
+                            proceeding with your support.
+                          </p>
+                        </div>
+                      </Popup>
                     </>
                   )
                 )
