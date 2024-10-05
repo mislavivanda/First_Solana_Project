@@ -8,6 +8,18 @@
 
 ---
 
+## Table of Contents
+
+- [**Idea and Motivation**](#idea-and-motivation)
+- [**Introducing BoldMint**](#introducing-boldmint)
+- [**Disclaimer: BoldMint isn't here to replace Patreon**](#disclaimer-boldmint-isnt-here-to-replace-patreon)
+- [**App Logic**](#app-logic)
+- [**Business part**](#business-part)
+- [**Tech Specifications**](#tech-specifications)
+- [**Future Plans and Improvements**](#future-plans-and-improvements)
+
+---
+
 ### **Idea and Motivation**
 
 For the reader, it’s a familiar scene: the smell of fresh coffee brewing, a comfy chair, and the anticipation of reading a new post from your favorite creator. Whether it’s an insightful blog, a witty Twitter thread, or a thought-provoking LinkedIn post, we all have that person we follow whose content we just can’t wait to dive into. Their words inspire us, entertain us, or simply make our day better. It's not just about the content—it’s about the connection we feel with the person behind the words. Yet, how often do we stop and think about the effort that goes into producing that content?
@@ -54,18 +66,18 @@ To promote inclusivity, the price of creating an NFT collection is covered by Bo
 
 ## **Tech Specifications**
 
-- **Frontend**:
+### **Frontend**:
 
-  - **Tailwind CSS** for responsive and modern design.
-  - **React** integrated within the Next.js framework, leveraging its dynamic routes and user authentication.
+- **Tailwind CSS** for responsive and modern design.
+- **React** integrated within the Next.js framework, leveraging its dynamic routes and user authentication.
 
-- **Backend**:
+### **Backend**:
 
-  - The backend functionality is integrated within the Next.js framework, leveraging its API routes for managing data fetching.
+- The backend functionality is integrated within the Next.js framework, leveraging its API routes for managing data fetching.
 
-- **Database**:
+### **Database**:
 
-  - Temporarary using **Contentful** headless CMS to avoid nuances involved with deploying a database to production environment.
+- Temporarary using **Contentful** headless CMS to avoid nuances involved with deploying a database to production environment.
 
 ### **Blockchain**:
 
@@ -78,7 +90,7 @@ To promote inclusivity, the price of creating an NFT collection is covered by Bo
 
 ### **Deployment**:
 
-- Deployed via **Vercel** on LINK
+- Deployed via **Vercel** on https://bold-mint.vercel.app/
 
 ### **Security**:
 
