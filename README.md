@@ -26,7 +26,7 @@ With Solana, BoldMint ensures fast, low-cost transactions that make content mone
 
 ### Disclaimer: BoldMint isn't here to replace Patreon
 
-While BoldMint offers creators an innovative way to monetize their content, we aren't looking to replace existing platforms like Patreon or PayPal. Instead, BoldMint complements these platforms by introducing blockchain technology into the equation with aims to provide an additional way for content creators to monetize their work. Many creators on platforms like Patreon still struggle with monetization, and offering a new revenue stream through crypto—without PayPal’s high transaction fees or platform cuts—addresses that gap.
+While BoldMint offers creators an innovative way to monetize their content, we aren't looking to replace existing platforms like Patreon or PayPal. Instead, BoldMint complements these platforms by introducing blockchain technology(specifically Solana) into the equation with aims to provide an additional way for content creators to monetize their work. Many creators on platforms like Patreon still struggle with monetization, and offering a new revenue stream through crypto—without PayPal’s high transaction fees or platform cuts—addresses that gap.
 
 This way, BoldMint expands creators' opportunities rather than forcing them to choose between existing methods and new options.
 
@@ -61,7 +61,7 @@ To promote inclusivity, the price of creating an NFT collection is covered by Bo
 
 - **Backend**:
 
-  - The backend functionality is integrated within the Next.js framework, leveraging its API routes for managing data fetching
+  - The backend functionality is integrated within the Next.js framework, leveraging its API routes for managing data fetching.
 
 - **Database**:
 
