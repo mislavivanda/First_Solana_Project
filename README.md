@@ -16,6 +16,7 @@
 - [**App Logic**](#app-logic)
 - [**Business part**](#business-part)
 - [**Tech Specifications**](#tech-specifications)
+- [**Step-by-Step Guide for Testing with Two Accounts**](#step-by-step-guide-for-testing-with-two-accounts)
 - [**Future Plans and Improvements**](#future-plans-and-improvements)
 
 ---
@@ -95,6 +96,36 @@ To promote inclusivity, the price of creating an NFT collection is covered by Bo
 ### **Security**:
 
 - All application pages and API calls are secured from unauthorized access thank to **next-auth** package. Also, it enables integration with wide range of authentication providers for user login including **Google** and **Github** which were used for this app.
+
+## **Step-by-Step Guide for Testing with Two Accounts**
+
+Let's start with 2 existing accounts whose login credentials and wallets are listed below:
+
+- John Doe
+  - **Email**: john.doe@example.com
+  - **Password**: password
+  - **Wallet Public Key**: 2Mvbrxj7LYZNmEtEGxfn7QGLNchcfmZCiSKk6t7R1UrX
+  - **Wallet Private Key**: 2mgV6f8hUX8fqQSruKYRnZcyVJ92NLG7CKRR3WiMFYcPF5ivTcmgC6cciF9ivKBJbD34naJsj15FAhwfQH9f8tQj
+- Jane Smith
+  - **Email**: jane.smith@example.com
+  - **Password**: password
+  - **Wallet Public Key**: ASZGV94JK6weZqhiSL6HDoJH8w6ES9GuHUCG5jFa3tnQ
+  - **Wallet Private Key**: 4xhMndzBPbjqUox6HafV3KHtfAGfVtwL2usXwfchMKryDPHDKtftcY3tiibuUx4uUDmZiqjCdXWcGbVVUeArykyi
+
+In her free time, Jane writes about various topics. She hears about BoldMint and decides to try to monetize her hobby. She navigates to the homepage, and by clicking the **Become Creator** button, she lands on the page where she needs to fill out a form to become a creator. She keeps all the form values as they are, enters her public key into the **Wallet** field, and completes the rest of the form:
+
+- **About**: Passionate about promoting a balanced and healthy lifestyle, Jane shares practical tips on mindfulness, simple recipes, and wellness practices. Whether you're looking to improve your mental health or make quick and nutritious meals, you'll find inspiration for everyday living.
+- **Tags**: Lifestyle, Wellness, Healthy
+
+She clicks the **Submit** button and waits for the app to complete her registration. Once it’s done, she is redirected to her creator page, where she can see the layout of her profile, as it will be visible to users. For testing purposes, two predefined blog posts have been added, but she can create additional posts anytime by going to the homepage (which now has a layout tailored for creators) and clicking the **Create Content** button.
+
+In the background, after clicking the **Submit** button, BoldMint generates a collection NFT and assigns it to Jane. This NFT won't be visible in her wallet because the owner (and mint authority) of the NFT is the BoldMint app so the NFT will be stored on its wallet for control and management purposes.
+
+The next day, John hears about BoldMint and registers on the platform. On his homepage, inside the **Popular Creators** section, he discovers Jane's profile, visits her page, and decides to support her. He clicks the **Support** button, connects his wallet, authorizes the transaction, and waits for BoldMint to finish its procedures. When everything is set, he notices that Jane's supporter count has changed to 1, and he now has access to her posts. John has just become her first supporter!
+
+In the background, BoldMint first performs a transaction where it splits the support amount between John's and Jane's accounts. Then, it mints and verifies an NFT for Jane's collection, which is now visible in John's account as the owner.
+
+Now, John and Jane are connected, with John enjoying exclusive content, and Jane getting the support and motivation to keep creating. BoldMint bridges the gap between creators and their audience in a seamless and rewarding way!
 
 ## **Future Plans and Improvements**
 
