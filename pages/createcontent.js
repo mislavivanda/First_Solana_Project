@@ -38,6 +38,10 @@ const CreateContent = () => {
   }, [isPageRendered]);
 
   const handlePublishClick = async () => {
+    if (!(title && markdown && postTags)) {
+      alertRef.current.showAlert("Missing required parameters.", "error");
+      return;
+    }
     try {
       setPublishContentLoading(true);
       const response = await fetch("/api/createContent", {

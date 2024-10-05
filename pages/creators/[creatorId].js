@@ -67,7 +67,7 @@ const AboutCreator = () => {
       }
       const creatorData = await response.json();
       console.log("creator data", creatorData);
-      const hasSupportedCreator = creatorData && creatorData.postsData;
+      const hasSupportedCreator = !!(creatorData && creatorData.postsData);
       if (creatorData && !hasSupportedCreator) {
         //*IZRACUN SUPPORT CIJENE
         const priceInSol = await getSupportersPrice(creatorData);
@@ -175,7 +175,7 @@ const AboutCreator = () => {
       }
     }
   };
-
+  console.log(creatorData && creatorData.postsData, hasSupportedCreator);
   return (
     <AuthorizedPage>
       {creatorDataLoading ? (
@@ -198,7 +198,7 @@ const AboutCreator = () => {
                 circleClasses="!w-[100px] !h-[100px] !text-[40px]"
               />
             </div>
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col flex-grow justify-center">
               <h1 className="text-4xl text-font-color-dark font-bold text-center sm:text-left mt-2 sm:mt-0">
                 {`${creatorData.name} ${creatorData.surname}`}
               </h1>
@@ -229,10 +229,10 @@ const AboutCreator = () => {
                     <h1 className="inline text-3xl font-extrabold w-full max-w-screen-xl text-left border-b-primary-color border-b-[5px] border-solid">
                       Posts
                     </h1>
-                    <div className="mt-6 mb-6 grid grid-cols-1 gap-4 sm:gap-6">
+                    <div className="mt-6 mb-6 grid gap-2 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                       {creatorData.postsData.length > 0 ? (
-                        creatorData.postsData.forEach((postData, index) => (
-                          <PostCard key={index} postData={postData} />
+                        creatorData.postsData.map((postData, index) => (
+                          <PostCard key={index} postCardData={postData} />
                         ))
                       ) : (
                         <p>No posts yet</p>
