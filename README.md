@@ -99,6 +99,8 @@ To promote inclusivity, the price of creating an NFT collection is covered by Bo
 
 ## **Step-by-Step Guide for Testing with Two Accounts**
 
+[Watch Tutorial Video](https://drive.google.com/file/d/1amUTyZ-iLLEt8c0BVIfIkIlWFRHc2Nec/view?usp=sharing)
+
 Let's start with 2 existing accounts whose login credentials and wallets are listed below:
 
 - John Doe
@@ -123,7 +125,7 @@ In the background, after clicking the **Submit** button, BoldMint generates a co
 
 The next day, John hears about BoldMint and registers on the platform. On his homepage, inside the **Popular Creators** section, he discovers Jane's profile, visits her page, and decides to support her. He clicks the **Support** button, connects his wallet, authorizes the transaction, and waits for BoldMint to finish its procedures. When everything is set, he notices that Jane's supporter count has changed to 1, and he now has access to her posts. John has just become her first supporter!
 
-In the background, BoldMint first performs a transaction where it splits the support amount between John's and Jane's accounts. Then, it mints and verifies an NFT for Jane's collection, which is now visible in John's account as the owner.
+In the background, BoldMint first performs a transaction where it splits the support amount between Jane's and BoldMint accounts. Then, it mints and verifies an NFT for Jane's collection, which is now visible in John's account as the owner.
 
 Now, John and Jane are connected, with John enjoying exclusive content, and Jane getting the support and motivation to keep creating. BoldMint bridges the gap between creators and their audience in a seamless and rewarding way!
 
