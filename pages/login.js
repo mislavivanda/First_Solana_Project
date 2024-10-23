@@ -64,9 +64,9 @@ const Login = () => {
   if (!loading) {
     return (
       <>
-        <div className="relative">
+        <div className="relative h-[calc(3rem+5px)] mb-2">
           <h1
-            className={`absolute -left-[200vw] -top-16 md:top-0 transition-transform duration-500 ease-in-out ${
+            className={`absolute -left-[200vw] transition-transform duration-500 ease-in-out ${
               runFormAnimation ? "translate-x-[200vw]" : ""
             }  inline text-5xl font-extrabold mx-5 sm:mx-10 text-left border-b-primary-color border-b-[5px] border-solid`}
           >

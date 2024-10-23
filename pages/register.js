@@ -15,9 +15,9 @@ const Register = () => {
 
   return (
     <>
-      <div className="relative">
+      <div className="relative h-[220px] sm:h-[calc(3rem+5px)] mb-2">
         <div
-          className={`absolute -left-[200vw] -top-16 lg:top-0 transition-transform duration-500 ease-in-out ${
+          className={`absolute -left-[200vw] transition-transform duration-500 ease-in-out ${
             mounted ? "translate-x-[200vw]" : ""
           }`}
         >
@@ -31,7 +31,7 @@ const Register = () => {
         </div>
       </div>
       {/*dodan height da na mobitelima footer bude uvijek ispod register dijela */}
-      <section className="relative mt-[7rem] flex items-center justify-center h-[25rem]">
+      <section className="relative flex items-center justify-center h-[25rem]">
         <div //isto kao kod logina samo uvecaj za velicinu h3 paragrafa -> fiksna, uvik 4 linije -> 4*lineheight = 7rem
           className={`w-full max-w-xs shadow-xl absolute mx-auto top-4 lg:top-0 -right-[calc(200vw-50%)] transition-transform duration-1000 ease-in-out ${
             mounted ? "-translate-x-[calc(200vw-50%)]" : ""
