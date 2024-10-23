@@ -9,7 +9,14 @@ const Layout = ({ children }) => {
     <div className="flex flex-col min-h-full">
       {router.pathname.split("/")[1] !== "login" &&
         router.pathname.split("/")[1] !== "register" && <Header />}
-      <main className="flex flex-col flex-grow pt-5 pb-20 sm:pb-15 px-5 sm:px-10 md:px-12 lg:px-14 text-font-color-dark">
+      <main
+        className={`flex flex-col flex-grow pt-5 pb-20 sm:pb-15 px-5 sm:px-10 md:px-12 lg:px-14 text-font-color-dark ${
+          router.pathname.split("/")[1] === "login" ||
+          router.pathname.split("/")[1] === "register"
+            ? "overflow-x-hidden" //*SPRJECAVANJE POJAVE SCROLLANJA NA NEKIM MOBILE BROWSERIMA ZBOG POZICIJA ELEMENATA NA POCETKU ANIMACIJE
+            : ""
+        }`}
+      >
         {children}
       </main>
       <Footer />
